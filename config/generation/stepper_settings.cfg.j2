@@ -1,0 +1,75 @@
+{# stepper_settings.cfg.j2 #}
+#####################################################################
+# stepper_settings.cfg.j2 — Jinja2 Template for Klipper Stepper Config
+#
+# Generates stepper and TMC blocks for X, Y, Z0–Z3 with cascading overrides:
+#   per-axis → group override → common default
+#####################################################################
+
+{% macro get_val(ax, field, group) -%}
+{{ ax.get(field) if ax.get(field) is not none else
+   (common[group].get(field) if common.get(group) and common[group].get(field) is not none else
+    common.get(field)) }}
+{%- endmacro %}
+
+{# --- X and Y axes --- #}
+{% for ax in axes if ax.id in ['X','Y'] %}
+{% set name = ax.klipper_name %}
+[stepper_{{ name }}]
+step_pin: {{ common.patterns.step_pin_alias.format(axis=ax.id) }}
+dir_pin:  {{ common.patterns.direction_pin_alias.format(axis=ax.id) }}
+enable_pin: !{{ common.patterns.enable_pin_alias.format(axis=ax.id) }}
+microsteps: {{ get_val(ax, 'microsteps', 'xy') }}
+rotation_distance: {{ get_val(ax, 'rotation_distance', 'xy') }}
+endstop_pin: {{ common.patterns.endstop_pin_alias.format(axis=ax.id) }}
+position_min: {{ common.xy.position_min }}
+position_endstop: {{ common.xy.position_endstop }}
+position_max: {{ common.xy.position_max }}
+homing_speed: {{ common.xy.homing_speed }}
+homing_retract_dist: {{ common.xy.homing_retract_dist }}
+homing_positive_dir: {{ common.xy.positive_dir }}
+
+[tmc5160 stepper_{{ name }}]
+cs_pin: {{ common.patterns.cs_pin_alias.format(axis=ax.id) }}
+spi_software_mosi_pin: {{ common.spi_mosi }}
+spi_software_miso_pin: {{ common.spi_miso }}
+spi_software_sclk_pin: {{ common.spi_sclk }}
+run_current: {{ common.run_current }}
+hold_current: {{ common.hold_current }}
+sense_resistor: {{ common.sense_resistor }}
+stealthchop_threshold: {{ common.stealthchop_threshold }}
+
+{% endfor %}
+
+{# --- Z axes (Z0–Z3) --- #}
+{% for ax in axes if ax.id.startswith('Z') %}
+{% set name = ax.klipper_name %}
+[stepper_{{ name }}]
+step_pin: {{ common.patterns.step_pin_alias.format(axis=ax.id) }}
+dir_pin:  {% if ax.get('invert_direction') %}!{% endif %}{{ common.patterns.direction_pin_alias.format(axis=ax.id) }}
+enable_pin: !{{ common.patterns.enable_pin_alias.format(axis=ax.id) }}
+microsteps: {{ get_val(ax, 'microsteps', 'z') }}
+rotation_distance: {{ get_val(ax, 'rotation_distance', 'z') }}
+gear_ratio: {{ common.z.gear_ratio }}
+
+{% if name == 'z' %}
+endstop_pin: {{ common.patterns.endstop_pin_alias.format(axis=ax.id) }}
+position_min: {{ common.z.position_min }}
+position_endstop: {{ common.z.position_endstop }}
+position_max: {{ common.z.position_max }}
+homing_speed: {{ common.z.homing_speed }}
+second_homing_speed: {{ common.z.second_homing_speed }}
+homing_retract_dist: {{ common.z.homing_retract_dist }}
+{% endif %}
+
+[tmc5160 stepper_{{ name }}]
+cs_pin: {{ common.patterns.cs_pin_alias.format(axis=ax.id) }}
+spi_software_mosi_pin: {{ common.spi_mosi }}
+spi_software_miso_pin: {{ common.spi_miso }}
+spi_software_sclk_pin: {{ common.spi_sclk }}
+run_current: {{ common.run_current }}
+hold_current: {{ common.hold_current }}
+sense_resistor: {{ common.sense_resistor }}
+stealthchop_threshold: {{ common.stealthchop_threshold }}
+
+{% endfor %}

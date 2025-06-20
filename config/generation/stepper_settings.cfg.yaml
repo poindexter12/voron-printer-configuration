@@ -1,0 +1,66 @@
+# steppers.yaml
+# ---------------------------------------------------------------
+# Master data file for generating Klipper stepper configs via Jinja2
+# Cascading overrides: common → group (xy/z) → per-axis (klipper_name, position_endstop)
+# ---------------------------------------------------------------
+
+common:
+  patterns:
+    step_pin_alias:      "{axis}_STEP_PIN"
+    direction_pin_alias: "{axis}_DIRECTION_PIN"
+    enable_pin_alias:    "{axis}_ENABLE_PIN"
+    cs_pin_alias:        "{axis}_CHIP_SELECT_PIN"
+    endstop_pin_alias:   "{axis}_ENDSTOP_PIN"
+
+  microsteps:            32
+  rotation_distance:     40
+
+  spi_mosi:              PA7
+  spi_miso:              PA6
+  spi_sclk:              PA5
+  run_current:           1.2
+  hold_current:          0.800
+  sense_resistor:        0.110
+  stealthchop_threshold: 10000
+
+  xy:
+    microsteps:          16
+    rotation_distance:   40
+    homing_speed:        25
+    homing_retract_dist: 5
+    positive_dir:        true
+    position_endstop:    350
+    position_max:        350
+    position_min:        0
+
+  z:
+    microsteps:          32
+    rotation_distance:   40
+    gear_ratio:          "80:16"
+    homing_speed:        8
+    second_homing_speed: 3
+    homing_retract_dist: 3
+    position_endstop:    -0.5   # only for primary Z
+    position_max:        310
+    position_min:        -0.5  # only for primary Z
+
+axes:
+  - id: X
+    klipper_name: x
+
+  - id: Y
+    klipper_name: y
+
+  - id: Z0
+    klipper_name: z
+
+  - id: Z1
+    klipper_name: z1
+    invert_direction: true
+
+  - id: Z2
+    klipper_name: z2
+
+  - id: Z3
+    klipper_name: z3
+    invert_direction: true

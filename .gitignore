@@ -1,0 +1,11 @@
+# Ignore everything
+/*
+
+# Except these
+!/.gitignore
+!/config/
+!/database/
+!/backup/
+
+# Ignore all .env files anywhere in the tree
+**/.env

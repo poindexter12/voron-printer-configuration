@@ -1,0 +1,62 @@
+[mcu]
+canbus_uuid: d93da3c32a1e
+
+[printer]
+kinematics: cartesian
+max_velocity: 200
+max_accel: 1000
+max_z_velocity: 5
+max_z_accel: 100
+
+[stepper_x]
+step_pin: PF11
+dir_pin: PF10
+enable_pin: !PF12
+microsteps: 16
+rotation_distance: 40
+position_min: 0
+position_max: 200
+position_endstop: 0
+endstop_pin: tmc5160_stepper_x:virtual_endstop
+
+[tmc5160 stepper_x]
+cs_pin: PC5
+spi_software_mosi_pin: PB5
+spi_software_miso_pin: PB4
+spi_software_sclk_pin: PB3
+run_current: 1.2
+hold_current: 0.5
+sense_resistor: 0.075
+stealthchop_threshold: 999999
+diag1_pin: PA0
+
+[virtual_endstop stepper_x]
+
+[stepper_y]
+step_pin: PB6
+dir_pin: PB7
+enable_pin: !PB8
+microsteps: 16
+rotation_distance: 40
+position_max: 200
+position_endstop: 0
+endstop_pin: tmc5160_stepper_y:virtual_endstop
+
+[stepper_z]
+step_pin: PC6
+dir_pin: PC7
+enable_pin: !PC8
+microsteps: 16
+rotation_distance: 8
+position_max: 200
+position_endstop: 0
+endstop_pin: tmc5160_stepper_z:virtual_endstop
+
+[probe]
+pin: PA1
+x_offset: 0
+y_offset: 0
+z_offset: 0
+
+[virtual_endstop stepper_y]
+[virtual_endstop stepper_z]
