@@ -10,6 +10,9 @@
 # Ignore all .env files anywhere in the tree
 **/.env
 
+# Ignore all log files
+**/*.log
+
 # Python virtual environments
 **/venv/
 **/.venv/
