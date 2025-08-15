@@ -1,3 +1,7 @@
 [submodule "config/klipper-macros"]
 	path = config/klipper-macros
 	url = git@github.com:jschuh/klipper-macros.git
+
+[submodule "config/.theme"]
+	path = config/.theme
+	url = git@github.com:lixxbox/mainsail-theme-minesail.git
