@@ -6,7 +6,7 @@ services:
     hostname: klipper
     restart: unless-stopped
     volumes:
-      - ${STORAGE_ROOT}/klipper:/config
+      - ${STORAGE_ROOT}/config:/config
     environment:
       - MCU=simulavr
     networks:
@@ -21,6 +21,7 @@ services:
       - klipper
     volumes:
       - ${STORAGE_ROOT}/moonraker:/config
+      - ${STORAGE_ROOT}/database:/database
     environment:
       - KLIPPER_HOST=klipper
       - KLIPPER_PORT=7125
@@ -35,9 +36,25 @@ services:
     depends_on:
       - moonraker
     ports:
-      - "80:80"
+      - 80:80
     environment:
       - MOONRAKER_API=http://moonraker:7125
+    volumes:
+      - ${STORAGE_ROOT}/mainsail:/usr/share/mainsail
+      - ${STORAGE_ROOT}/gcodes:/gcodes
+      - ${STORAGE_ROOT}/config/.theme:/usr/share/mainsail/theme
+    networks:
+      - printer_net
+
+  crowsnest:
+    image: crowsnest/crowsnest:latest
+    container_name: crowsnest
+    hostname: crowsnest
+    restart: unless-stopped
+    depends_on:
+      - moonraker
+    volumes:
+      - ${STORAGE_ROOT}/config:/config
     networks:
       - printer_net
 
