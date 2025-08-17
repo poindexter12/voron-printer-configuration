@@ -8,4 +8,4 @@
 
 [submodule "prind"]
 	path = prind
-	url = git@github.com:mkfu/prind.git
+	url = git@github.com:mkuf/prind.git
