@@ -1,7 +1,11 @@
-[submodule "config/klipper-macros"]
+[submodule "klipper-macros"]
 	path = config/klipper-macros
 	url = git@github.com:jschuh/klipper-macros.git
 
-[submodule "config/.theme"]
+[submodule "minecraft-theme"]
 	path = config/.theme
 	url = git@github.com:lixxbox/mainsail-theme-minesail.git
+
+[submodule "prind"]
+	path = prind
+	url = git@github.com:mkfu/prind.git
