@@ -17,7 +17,7 @@ def clean_gcode_lines(path):
             break
         if line and ':' in line and not line.startswith(';'):
             continue
-        if not line or line.startswith(';'):
+        if not line or line.startswith(';') or line.startswith('#'):
             continue
         if '{%' in line or '%}' in line:
             continue
