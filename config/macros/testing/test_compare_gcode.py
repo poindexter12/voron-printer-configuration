@@ -19,6 +19,8 @@ def clean_gcode_lines(path):
             continue
         if not line or line.startswith(';'):
             continue
+        if '{%' in line or '%}' in line:
+            continue
         if ';' in line:
             line = line.split(';', 1)[0].strip()
         cleaned.append(line)
