@@ -6,6 +6,7 @@
 	path = config/.theme
 	url = git@github.com:lixxbox/mainsail-theme-minesail.git
 
-[submodule "mkuf/prind"]
+[submodule "prind"]
 	path = prind
 	url = git@github.com:mkuf/prind.git
+	branch = main
