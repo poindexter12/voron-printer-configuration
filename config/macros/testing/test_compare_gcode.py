@@ -2,9 +2,7 @@ import unittest
 import os
 from datetime import datetime
 
-def clean_gcode_lines(path):
-    with open(path, 'r') as f:
-        lines = f.readlines()
+def clean_gcode_lines(lines):
     cleaned = []
     in_gcode = False
     for line in lines:
@@ -40,16 +38,21 @@ class TestGcodeComparison(unittest.TestCase):
         for orig, render in self.file_pairs:
             orig_path = os.path.join(os.path.dirname(__file__), orig)
             render_path = os.path.join(os.path.dirname(__file__), render)
-            orig_lines = clean_gcode_lines(orig_path)
-            render_lines = clean_gcode_lines(render_path)
+            with open(orig_path, 'r') as f:
+                orig_lines = f.readlines()
+            with open(render_path, 'r') as f:
+                render_lines = f.readlines()
+            # Clean both after rendering
+            orig_cleaned = clean_gcode_lines(orig_lines)
+            render_cleaned = clean_gcode_lines(render_lines)
             # Save cleaned rendered template
             render_clean_path = os.path.join(results_dir, f'rendered_clean_{os.path.basename(render)}')
             with open(render_clean_path, 'w') as rc:
-                rc.write('\n'.join(render_lines) + '\n')
+                rc.write('\n'.join(render_cleaned) + '\n')
             diffs = []
-            for i in range(max(len(orig_lines), len(render_lines))):
-                o = orig_lines[i] if i < len(orig_lines) else None
-                r = render_lines[i] if i < len(render_lines) else None
+            for i in range(max(len(orig_cleaned), len(render_cleaned))):
+                o = orig_cleaned[i] if i < len(orig_cleaned) else None
+                r = render_cleaned[i] if i < len(render_cleaned) else None
                 if o != r:
                     if o is None:
                         diffs.append((i+1, 'EXTRA in template'))
