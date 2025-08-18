@@ -1,0 +1,5 @@
+# fourth nudge, 270 degrees of rotation
+G1 F2400 X-1 E0.03384
+G1 F2400 Y1 E0.03384
+G1 F2400 X1 E0.03384
+G1 F2400 Y-1 E0.03384

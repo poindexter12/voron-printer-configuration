@@ -43,13 +43,15 @@ def klipper_to_jinja(text):
     import re
     return re.sub(r'(?<!\{)\{([a-zA-Z0-9_]+)\}(?!\})', r'{{ \1 }}', text)
 
-def clean_gcode_file(path, render_jinja=False):
-    """Read a file, optionally render as Jinja2, and return cleaned lines."""
+def clean_gcode_file(path, render_jinja=False, params=None):
+    """Read a file, optionally render as Jinja2 with given parameters, and return cleaned lines."""
+    if params is None:
+        params = {}
     with open(path, 'r') as f:
         content = f.read()
         if render_jinja:
             content = klipper_to_jinja(content)
-            content = Template(content).render(params={})
+            content = Template(content).render(params=params)
         lines = content.splitlines()
     cleaned = []
     for line in lines:
@@ -65,7 +67,7 @@ def clean_gcode_file(path, render_jinja=False):
 
 class TestGcodeComparison(unittest.TestCase):
     file_pairs = [
-        ('calibration_tower/calibration_block.gcode', '../calibration_tower/calibration_block.cfg'),
+        ('calibration_tower/tower_corner_nudge.gcode', '../calibration_tower/tower_corner_nudge.cfg', {'ROTATION_DEGREES': 270, 'NOZZLE_DIAMETER': 0.4, 'LAYER_HEIGHT': 0.2, 'FILAMENT_DIAMETER': 1.7, 'EXTRUSION_MULTIPLIER': 1.0, 'MOVE_DISTANCE': 1, 'PRINT_SPEED': 2400}),
         # Add more pairs here
     ]
 
@@ -81,11 +83,11 @@ class TestGcodeComparison(unittest.TestCase):
         os.makedirs(results_dir, exist_ok=True)
         log_path = os.path.join(results_dir, 'diff_log.txt')
 
-        for orig, render in self.file_pairs:
+        for orig, render, params in self.file_pairs:
             orig_path = os.path.join(os.path.dirname(__file__), orig)
             render_path = os.path.join(os.path.dirname(__file__), render)
             orig_cleaned = clean_gcode_file(orig_path)
-            render_cleaned = clean_gcode_file(render_path, render_jinja=True)
+            render_cleaned = clean_gcode_file(render_path, render_jinja=True, params=params)
 
             # Save cleaned files using helper
             save_cleaned_files(results_dir, render, render_cleaned, orig, orig_cleaned)
