@@ -1,54 +1,95 @@
 import unittest
 import os
+import shutil
 from datetime import datetime
+from jinja2 import Template
 
-def clean_gcode_lines(lines):
+
+
+# Read retain_count from environment (allow override). Default to 5.
+try:
+    RETAIN_COUNT = int(os.environ.get('retain_count', os.environ.get('RETAIN_COUNT', '5')))
+except ValueError:
+    RETAIN_COUNT = 5
+
+def save_cleaned_files(results_dir, render, render_cleaned, orig, orig_cleaned):
+    """Save cleaned rendered and source files to disk."""
+    render_clean_path = os.path.join(results_dir, f'rendered_clean_{os.path.basename(render)}')
+    with open(render_clean_path, 'w') as rc:
+        rc.write('\n'.join(render_cleaned) + '\n')
+
+    source_clean_path = os.path.join(results_dir, f'source_clean_{os.path.basename(orig)}')
+    with open(source_clean_path, 'w') as sc:
+        sc.write('\n'.join(orig_cleaned) + '\n')
+
+
+def cleanup_old_runs(results_root, retain_count):
+    """Remove oldest test_run* directories so that after creating a new run there will be at most retain_count runs."""
+    if not os.path.isdir(results_root):
+        return
+    runs = [d for d in os.listdir(results_root) if d.startswith('test_run') and os.path.isdir(os.path.join(results_root, d))]
+    runs.sort()
+    if len(runs) >= retain_count:
+        to_keep = max(0, retain_count - 1)
+        to_delete = runs[:max(0, len(runs) - to_keep)]
+        for d in to_delete:
+            try:
+                shutil.rmtree(os.path.join(results_root, d))
+            except Exception as exc:
+                print(f"Warning: failed to remove {d}: {exc}")
+
+def klipper_to_jinja(text):
+    """Convert Klipper-style {variable} to Jinja2-style {{ variable }}."""
+    import re
+    return re.sub(r'(?<!\{)\{([a-zA-Z0-9_]+)\}(?!\})', r'{{ \1 }}', text)
+
+def clean_gcode_file(path, render_jinja=False):
+    """Read a file, optionally render as Jinja2, and return cleaned lines."""
+    with open(path, 'r') as f:
+        content = f.read()
+        if render_jinja:
+            content = klipper_to_jinja(content)
+            content = Template(content).render(params={})
+        lines = content.splitlines()
     cleaned = []
-    in_gcode = False
     for line in lines:
         line = line.strip()
-        if not in_gcode:
-            if line.lower() == 'gcode:':
-                in_gcode = True
+        if not line:
             continue
-        if line and (line.startswith('[') and line.endswith(']')):
-            break
-        if line and ':' in line and not line.startswith(';'):
+        if line.startswith('[') or line.startswith(';') or line.startswith('#'):
             continue
-        if not line or line.startswith(';') or line.startswith('#'):
+        if '{%' in line or ':' in line:
             continue
-        if '{%' in line or '%}' in line:
-            continue
-        if ';' in line:
-            line = line.split(';', 1)[0].strip()
         cleaned.append(line)
     return cleaned
 
 class TestGcodeComparison(unittest.TestCase):
     file_pairs = [
-        ('../calibration_tower/original.old', '../calibration_tower/calibration_tower.cfg'),
+        ('calibration_tower/calibration_block.gcode', '../calibration_tower/calibration_block.cfg'),
         # Add more pairs here
     ]
 
     def test_gcode_files_equal(self):
+        # Prepare results root and cleanup old runs according to RETAIN_COUNT
+        results_root = os.path.join(os.path.dirname(__file__), 'test_results')
+        os.makedirs(results_root, exist_ok=True)
+        # Cleanup old runs using helper
+        cleanup_old_runs(results_root, RETAIN_COUNT)
+
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        results_dir = os.path.join(os.path.dirname(__file__), 'test_results', f'test_run{timestamp}')
+        results_dir = os.path.join(results_root, f'test_run{timestamp}')
         os.makedirs(results_dir, exist_ok=True)
         log_path = os.path.join(results_dir, 'diff_log.txt')
+
         for orig, render in self.file_pairs:
             orig_path = os.path.join(os.path.dirname(__file__), orig)
             render_path = os.path.join(os.path.dirname(__file__), render)
-            with open(orig_path, 'r') as f:
-                orig_lines = f.readlines()
-            with open(render_path, 'r') as f:
-                render_lines = f.readlines()
-            # Clean both after rendering
-            orig_cleaned = clean_gcode_lines(orig_lines)
-            render_cleaned = clean_gcode_lines(render_lines)
-            # Save cleaned rendered template
-            render_clean_path = os.path.join(results_dir, f'rendered_clean_{os.path.basename(render)}')
-            with open(render_clean_path, 'w') as rc:
-                rc.write('\n'.join(render_cleaned) + '\n')
+            orig_cleaned = clean_gcode_file(orig_path)
+            render_cleaned = clean_gcode_file(render_path, render_jinja=True)
+
+            # Save cleaned files using helper
+            save_cleaned_files(results_dir, render, render_cleaned, orig, orig_cleaned)
+
             diffs = []
             for i in range(max(len(orig_cleaned), len(render_cleaned))):
                 o = orig_cleaned[i] if i < len(orig_cleaned) else None
@@ -78,7 +119,7 @@ class TestGcodeComparison(unittest.TestCase):
             if diffs:
                 line_num, diff_type = diffs[0]
                 print(f"First difference for {orig} vs {render}: Line {line_num} ({diff_type})")
-                print(f"SUMMARY: Total differences: {len(diffs)} (see {log_path})")
+                print(f"SUMMARY: Total differences: {len(diffs)} (see {os.path.relpath(log_path)})")
             self.assertFalse(diffs, "Differences found, see log file for details.")
 
 if __name__ == '__main__':
