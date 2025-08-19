@@ -16,8 +16,13 @@ except ValueError:
 
 def save_cleaned_files(results_dir, render, render_cleaned, orig, orig_cleaned):
     """Save cleaned rendered and source files to disk."""
+    # Ensure rendered output gets .gcode extension since it contains G-code
+    render_basename = os.path.basename(render)
+    if render_basename.endswith('.cfg'):
+        render_basename = render_basename[:-4] + '.gcode'
+
     render_clean_path = os.path.join(
-        results_dir, f'rendered_clean_{os.path.basename(render)}')
+        results_dir, f'rendered_clean_{render_basename}')
     with open(render_clean_path, 'w', encoding='utf-8') as rc:
         rc.write('\n'.join(render_cleaned) + '\n')
 
