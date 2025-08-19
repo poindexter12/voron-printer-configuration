@@ -4,6 +4,7 @@
 # Ignore all log files
 **/*.log
 
-# Python virtual environments
+# Python things
 **/venv/
 **/.venv/
+**/__pycache__/

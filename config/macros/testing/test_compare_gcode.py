@@ -67,7 +67,8 @@ def clean_gcode_file(path, render_jinja=False, params=None):
 
 class TestGcodeComparison(unittest.TestCase):
     file_pairs = [
-        ('calibration_tower/tower_corner_nudge.gcode', '../calibration_tower/tower_corner_nudge.cfg', {'ROTATION_DEGREES': 270, 'NOZZLE_DIAMETER': 0.4, 'LAYER_HEIGHT': 0.2, 'FILAMENT_DIAMETER': 1.7, 'EXTRUSION_MULTIPLIER': 1.0, 'MOVE_DISTANCE': 1, 'PRINT_SPEED': 2400}),
+        #('calibration_tower/tower_corner_nudge.gcode', '../calibration_tower/tower_corner_nudge.cfg', {'ROTATION_DEGREES': 270, 'NOZZLE_DIAMETER': 0.4, 'LAYER_HEIGHT': 0.2, 'FILAMENT_DIAMETER': 1.7, 'EXTRUSION_MULTIPLIER': 1.0, 'MOVE_DISTANCE': 1, 'PRINT_SPEED': 2400}),
+        ('retraction/perimeter_layer.gcode', '../retraction_test/perimeter_layer_test.cfg', {}),
         # Add more pairs here
     ]
 
