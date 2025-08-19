@@ -7,5 +7,5 @@ install: venv
 sample:
 	. .venv/bin/activate && python render_gcode.py
 
-tests:
+test:
 	. .venv/bin/activate && python -m pytest tests/ -v

@@ -8,51 +8,51 @@ from utils.gcode_helpers import (
 )
 
 # Test data for different layer types
-test_cases = [
-    {
-        'name': 'first_layer',
-        'orig_file': '../fixtures/expected_gcode/perimeter_first_layer.gcode',
-        'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
-        'params': {
-            'START_X': 132.6417,
-            'START_Y': 148.0068,
-            'WIDTH': 84.7166,  # Actual width from expected G-code: 217.3583 - 132.6417
-            'HEIGHT': 42.4264,  # Actual height from expected G-code: 190.4332 - 148.0068
-            'LINE_WIDTH': 0.56,  # 140% of 0.4mm nozzle
-            'LAYER_HEIGHT': 0.25,  # First layer height from G-code header
-            'NUM_PERIMETERS': 4,
-            'STEP_DISTANCE': 0.5063495408493621,  # Actual step distance from expected G-code: 133.148 - 132.6417
-            'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min
-            'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
-            'FILAMENT_DIAMETER': 1.7,
-            'EXTRUSION_MULTIPLIER': 1.0
-        }
-    },
-    {
-        'name': 'other_layers',
-        'orig_file': '../fixtures/expected_gcode/perimeter_other_layers.gcode',
-        'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
-        'params': {
-            'START_X': 132.6417,
-            'START_Y': 190.9396,  # Different Y start for subsequent layers
-            'WIDTH': 64.2545,  # Actual width from expected G-code: 196.8962 - 132.6417
-            'HEIGHT': 11.5063,  # Actual height from expected G-code: 202.4459 - 190.9396
-            'LINE_WIDTH': 0.45,  # 112.5% of 0.4mm nozzle
-            'LAYER_HEIGHT': 0.2,  # Subsequent layer height from G-code header
-            'NUM_PERIMETERS': 4,
-            'STEP_DISTANCE': 0.5063495408493621,  # Same step distance
-            'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min (same as first layer for this G-code)
-            'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
-            'FILAMENT_DIAMETER': 1.7,
-            'EXTRUSION_MULTIPLIER': 1.0
-        }
+first_layer_test_data = {
+    'name': 'first_layer',
+    'orig_file': '../fixtures/expected_gcode/perimeter_first_layer.gcode',
+    'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
+    'params': {
+        'START_X': 132.6417,
+        'START_Y': 148.0068,
+        'WIDTH': 84.7166,  # Actual width from expected G-code: 217.3583 - 132.6417
+        'HEIGHT': 42.4264,  # Actual height from expected G-code: 190.4332 - 148.0068
+        'LINE_WIDTH': 0.56,  # 140% of 0.4mm nozzle
+        'LAYER_HEIGHT': 0.25,  # First layer height from G-code header
+        'NUM_PERIMETERS': 4,
+        'STEP_DISTANCE': 0.5063495408493621,  # Actual step distance from expected G-code: 133.148 - 132.6417
+        'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min
+        'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
+        'FILAMENT_DIAMETER': 1.7,
+        'EXTRUSION_MULTIPLIER': 1.0
     }
-]
+}
+
+other_layers_test_data = {
+    'name': 'other_layers',
+    'orig_file': '../fixtures/expected_gcode/perimeter_other_layers.gcode',
+    'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
+    'params': {
+        'START_X': 132.6417,
+        'START_Y': 190.9396,  # Different Y start for subsequent layers
+        'WIDTH': 64.2545,  # Actual width from expected G-code: 196.8962 - 132.6417
+        'HEIGHT': 11.5063,  # Actual height from expected G-code: 202.4459 - 190.9396
+        'LINE_WIDTH': 0.45,  # 112.5% of 0.4mm nozzle
+        'LAYER_HEIGHT': 0.2,  # Subsequent layer height from G-code header
+        'NUM_PERIMETERS': 4,
+        'STEP_DISTANCE': 0.5063495408493621,  # Same step distance
+        'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min (same as first layer for this G-code)
+        'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
+        'FILAMENT_DIAMETER': 1.7,
+        'EXTRUSION_MULTIPLIER': 1.0
+    }
+}
 
 # Note: results_dir fixture is now provided by conftest.py
-def run_perimeter_test(results_dir, orig_file, render_file, params):
+def run_perimeter_test(results_dir, orig_file, render_file, params, test_name):
     """Common method to run perimeter layer tests with given file names and parameters.
-    Returns diffs for the calling test to handle."""
+    Handles all common output logic including HTML diff saving and logging.
+    Returns diff_count for the calling test to handle assertions."""
     orig_path = os.path.join(os.path.dirname(__file__), orig_file)
     render_path = os.path.join(os.path.dirname(__file__), render_file)
 
@@ -63,7 +63,7 @@ def run_perimeter_test(results_dir, orig_file, render_file, params):
     save_cleaned_files(results_dir, render_path, render_cleaned, orig_path,
                       orig_cleaned)
 
-            # Generate HTML diff for easier viewing
+    # Generate HTML diff for easier viewing
     html_diff = diff_with_html(
         orig_cleaned,
         render_cleaned,
@@ -74,36 +74,50 @@ def run_perimeter_test(results_dir, orig_file, render_file, params):
     # Count actual differences (lines that start with + or -)
     diff_count = sum(1 for line in html_diff.split('\n') if line.startswith('<td class="diff_add">') or line.startswith('<td class="diff_sub">'))
 
-    return diff_count, html_diff
-
-@pytest.mark.parametrize("test_case", test_cases)
-def test_perimeter_layers(results_dir, test_case):
-    """Test that perimeter layer G-code matches expected output for different layer types."""
-    diff_count, html_diff = run_perimeter_test(results_dir,
-                      test_case['orig_file'],
-                      test_case['render_file'],
-                      test_case['params'])
-
     # Save HTML diff for easier viewing
-    html_diff_path = os.path.join(results_dir, f'{test_case["name"]}_diff.html')
+    html_diff_path = os.path.join(results_dir, f'{test_name}_diff.html')
     with open(html_diff_path, 'w', encoding='utf-8') as htmlf:
         htmlf.write(html_diff)
 
     # Log results
-    log_path = os.path.join(results_dir, f'{test_case["name"]}_test.log')
+    log_path = os.path.join(results_dir, f'{test_name}_test.log')
     with open(log_path, 'w', encoding='utf-8') as logf:
-        logf.write(f"{test_case['name'].title().replace('_', ' ')} Test Results\n")
-        logf.write(f"Expected: {test_case['orig_file']}\n")
-        logf.write(f"Generated: {test_case['render_file']}\n")
+        logf.write(f"{test_name.title().replace('_', ' ')} Test Results\n")
+        logf.write(f"Expected: {orig_file}\n")
+        logf.write(f"Generated: {render_file}\n")
         logf.write(f"Total differences: {diff_count}\n")
         logf.write(f"HTML diff: {os.path.basename(html_diff_path)}")
 
+    # Print console output if there are differences
     if diff_count > 0:
-        print(f"{test_case['name'].title().replace('_', ' ')} Test: {diff_count} differences found")
+        print(f"{test_name.title().replace('_', ' ')} Test: {diff_count} differences found")
         print(f"See {os.path.relpath(log_path)} for details")
         print(f"HTML diff: {os.path.relpath(html_diff_path)}")
 
-    assert diff_count == 0, f"{test_case['name']} perimeter test failed: {diff_count} differences found"
+    return diff_count
+
+@pytest.mark.retraction
+def test_first_layer_perimeter(results_dir):
+    """Test first layer perimeter generation (140% line width, 0.25mm height)."""
+    diff_count = run_perimeter_test(results_dir,
+                      first_layer_test_data['orig_file'],
+                      first_layer_test_data['render_file'],
+                      first_layer_test_data['params'],
+                      first_layer_test_data['name'])
+
+    assert diff_count == 0, f"{first_layer_test_data['name']} perimeter test failed: {diff_count} differences found"
+
+
+@pytest.mark.retraction
+def test_other_layers_perimeter(results_dir):
+    """Test other layers perimeter generation (112.5% line width, 0.2mm height)."""
+    diff_count = run_perimeter_test(results_dir,
+                      other_layers_test_data['orig_file'],
+                      other_layers_test_data['render_file'],
+                      other_layers_test_data['params'],
+                      other_layers_test_data['name'])
+
+    assert diff_count == 0, f"{other_layers_test_data['name']} perimeter test failed: {diff_count} differences found"
 
 if __name__ == '__main__':
     pytest.main([__file__])
