@@ -4,7 +4,7 @@ This directory contains the testing infrastructure for Klipper macros, specifica
 
 ## Folder Structure
 
-```
+```text
 config/macros/testing/
 ├── tests/                          # Main test directory
 │   ├── __init__.py                # Makes tests a Python package

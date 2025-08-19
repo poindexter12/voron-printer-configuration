@@ -104,6 +104,7 @@ G0 Z0.25 F7200 ; Move to start layer height
 G1 E0.5 F2100 ; Un-retract
 SET_PRESSURE_ADVANCE ADVANCE=0 ; Set pressure advance to start value
 M117 PA 0
+
 G1 X132.6417 Y190.4332 E2.36613 F1800 ; Draw perimeter (up)
 G1 X217.3583 Y190.4332 E4.72467 F1800 ; Draw perimeter (right)
 G1 X217.3583 Y148.0068 E2.36613 F1800 ; Draw perimeter (down)
@@ -123,11 +124,13 @@ G1 X134.1607 Y188.9142 E2.1967 F1800 ; Draw perimeter (up)
 G1 X215.8393 Y188.9142 E4.55523 F1800 ; Draw perimeter (right)
 G1 X215.8393 Y149.5258 E2.1967 F1800 ; Draw perimeter (down)
 G1 X134.1607 Y149.5258 E4.55523 F1800 ; Draw perimeter (left)
+
 G1 E-0.5 F2100 ; Retract
 G1 Z0.35 F7200 ; Z hop
 G0 X132.6417 Y190.9396 F7200 ; Move to box start
 G1 Z0.25 F7200 ; Z hop return
 G1 E0.5 F2100 ; Un-retract
+
 G1 X132.6417 Y202.4459 E0.64171 F1800 ; Draw perimeter (up)
 G1 X196.8962 Y202.4459 E3.58349 F1800 ; Draw perimeter (right)
 G1 X196.8962 Y190.9396 E0.64171 F1800 ; Draw perimeter (down)
@@ -147,6 +150,7 @@ G1 X134.1607 Y200.9269 E0.47228 F1800 ; Draw perimeter (up)
 G1 X195.3771 Y200.9269 E3.41405 F1800 ; Draw perimeter (right)
 G1 X195.3771 Y192.4586 E0.47228 F1800 ; Draw perimeter (down)
 G1 X134.1607 Y192.4586 E3.41405 F1800 ; Draw perimeter (left)
+
 G0 X134.5341 Y192.8319 F7200 ; Move to fill start
 G0 X135.2502 Y192.8319 F7200 ; Move
 G1 X134.5341 Y193.548 E0.05648 F1800 ; Fill

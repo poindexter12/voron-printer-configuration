@@ -68,3 +68,63 @@ def diff_with_html(original_lines, generated_lines, original_name="original", ge
     import difflib
     html_diff = difflib.HtmlDiff()
     return html_diff.make_file(original_lines, generated_lines, original_name, generated_name)
+
+
+def run_gcode_comparison_test(results_dir, orig_file, render_file, params, test_name):
+    """Common method to run G-code comparison tests with given file names and parameters.
+
+    This function handles all common output logic including HTML diff saving and logging.
+    It can be used by any test that needs to compare G-code files.
+
+    Args:
+        results_dir: Directory to save test results
+        orig_file: Path to the original/expected G-code file
+        render_file: Path to the template file to render
+        params: Parameters to pass to the Jinja2 template
+        test_name: Name for the test (used in output files)
+
+    Returns:
+        diff_count: Number of differences found
+    """
+    orig_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests', orig_file)
+    render_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), render_file)
+
+    orig_cleaned = clean_gcode_file(orig_path)
+    render_cleaned = clean_gcode_file(render_path, render_jinja=True, params=params)
+
+    # Save cleaned files using helper
+    save_cleaned_files(results_dir, render_path, render_cleaned, orig_path,
+                      orig_cleaned)
+
+    # Generate HTML diff for easier viewing
+    html_diff = diff_with_html(
+        orig_cleaned,
+        render_cleaned,
+        os.path.basename(orig_path),
+        os.path.basename(render_path)
+    )
+
+    # Count actual differences (lines that start with + or -)
+    diff_count = sum(1 for line in html_diff.split('\n') if line.startswith('<td class="diff_add">') or line.startswith('<td class="diff_sub">'))
+
+    # Save HTML diff for easier viewing
+    html_diff_path = os.path.join(results_dir, f'{test_name}_diff.html')
+    with open(html_diff_path, 'w', encoding='utf-8') as htmlf:
+        htmlf.write(html_diff)
+
+    # Log results
+    log_path = os.path.join(results_dir, f'{test_name}_test.log')
+    with open(log_path, 'w', encoding='utf-8') as logf:
+        logf.write(f"{test_name.title().replace('_', ' ')} Test Results\n")
+        logf.write(f"Expected: {orig_file}\n")
+        logf.write(f"Generated: {render_file}\n")
+        logf.write(f"Total differences: {diff_count}\n")
+        logf.write(f"HTML diff: {os.path.basename(html_diff_path)}")
+
+    # Print console output if there are differences
+    if diff_count > 0:
+        print(f"{test_name.title().replace('_', ' ')} Test: {diff_count} differences found")
+        print(f"See {os.path.relpath(log_path)} for details")
+        print(f"HTML diff: {os.path.relpath(html_diff_path)}")
+
+    return diff_count
