@@ -89,12 +89,13 @@ class TestGcodeComparison(unittest.TestCase):
              'START_X': 132.6417,
              'START_Y': 148.0068,
              'WIDTH': 84.72,
-             'HEIGHT': 53.99,
-             'LINE_WIDTH': 0.45,  # 112.5% of 0.4mm nozzle
-             'LAYER_HEIGHT': 0.2,
+             'HEIGHT': 42.4264,  # Actual height from expected G-code: 190.4332 - 148.0068
+             'LINE_WIDTH': 0.56,  # 140% of 0.4mm nozzle
+             'LAYER_HEIGHT': 0.25,  # First layer height from G-code header
              'NUM_PERIMETERS': 4,
              'STEP_DISTANCE': 0.5,
-             'SPEED': 100,
+             'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min
+             'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
              'FILAMENT_DIAMETER': 1.7,
              'EXTRUSION_MULTIPLIER': 1.0
          }),
