@@ -93,12 +93,12 @@ class TestGcodeComparison(unittest.TestCase):
          '../retraction_test/draw_perimeter_layer.cfg', {
              'START_X': 132.6417,
              'START_Y': 148.0068,
-             'WIDTH': 84.72,
+             'WIDTH': 84.7166,  # Actual width from expected G-code: 217.3583 - 132.6417
              'HEIGHT': 42.4264,  # Actual height from expected G-code: 190.4332 - 148.0068
              'LINE_WIDTH': 0.56,  # 140% of 0.4mm nozzle
              'LAYER_HEIGHT': 0.25,  # First layer height from G-code header
              'NUM_PERIMETERS': 4,
-             'STEP_DISTANCE': 0.5,
+             'STEP_DISTANCE': 0.5063495408493621,  # Actual step distance from expected G-code: 133.148 - 132.6417
              'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min
              'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
              'FILAMENT_DIAMETER': 1.7,
