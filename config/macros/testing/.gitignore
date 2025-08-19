@@ -1,1 +1,5 @@
 test_results/
+
+# ignore pytest cache
+__pycache__/
+.pytest_cache/

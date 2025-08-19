@@ -8,4 +8,4 @@ sample:
 	. .venv/bin/activate && python render_gcode.py
 
 tests:
-	. .venv/bin/activate && python -m unittest test_compare_gcode.py
+	. .venv/bin/activate && python -m pytest test_compare_gcode.py -v
