@@ -13,8 +13,6 @@ config/macros/testing/
 │   ├── expected_gcode/            # Expected G-code output files
 │   │   ├── perimeter_first_layer.gcode
 │   │   └── perimeter_other_layers.gcode
-│   └── macro_templates/           # Jinja2 macro templates
-│       └── draw_perimeter_layer.cfg
 ├── utils/                          # Utility functions
 │   ├── __init__.py
 │   └── gcode_helpers.py           # G-code processing utilities
@@ -59,7 +57,6 @@ python -m pytest tests/test_compare_gcode.py::test_first_layer_perimeter -v
   - `results_dir`: Creates timestamped test result directories
   - `fixtures_dir`: Path to test fixtures
   - `expected_gcode_dir`: Path to expected G-code files
-  - `macro_templates_dir`: Path to macro templates
 
 ### Utilities
 

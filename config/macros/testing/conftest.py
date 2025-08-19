@@ -57,9 +57,3 @@ def fixtures_dir():
 def expected_gcode_dir(fixtures_dir):
     """Return the expected G-code fixtures directory path."""
     return os.path.join(fixtures_dir, 'expected_gcode')
-
-
-@pytest.fixture(scope="session")
-def macro_templates_dir(fixtures_dir):
-    """Return the macro templates fixtures directory path."""
-    return os.path.join(fixtures_dir, 'macro_templates')
