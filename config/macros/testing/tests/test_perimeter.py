@@ -8,7 +8,7 @@ from utils.gcode_helpers import run_gcode_comparison_test
 first_layer_test_data = {
     'name': 'first_layer',
     'orig_file': '../fixtures/expected_gcode/perimeter_first_layer.gcode',
-    'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
+    'render_file': '../retraction_test/draw_perimeter_layer.cfg',
     'params': {
         'START_X': 132.6417,
         'START_Y': 148.0068,
@@ -18,8 +18,8 @@ first_layer_test_data = {
         'LAYER_HEIGHT': 0.25,  # First layer height from G-code header
         'NUM_PERIMETERS': 4,
         'STEP_DISTANCE': 0.5063495408493621,  # Actual step distance from expected G-code: 133.148 - 132.6417
-        'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min
-        'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
+        'PRINT_SPEED': 1800,  # 30 mm/s * 60 = 1800 mm/min
+        'TRAVEL_SPEED': 7200,  # 120 mm/s * 60 = 7200 mm/min
         'FILAMENT_DIAMETER': 1.7,
         'EXTRUSION_MULTIPLIER': 1.0
     }
@@ -28,7 +28,7 @@ first_layer_test_data = {
 other_layers_test_data = {
     'name': 'other_layers',
     'orig_file': '../fixtures/expected_gcode/perimeter_other_layers.gcode',
-    'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
+    'render_file': '../retraction_test/draw_perimeter_layer.cfg',
     'params': {
         'START_X': 132.6417,
         'START_Y': 190.9396,  # Different Y start for subsequent layers
@@ -38,8 +38,8 @@ other_layers_test_data = {
         'LAYER_HEIGHT': 0.2,  # Subsequent layer height from G-code header
         'NUM_PERIMETERS': 4,
         'STEP_DISTANCE': 0.5063495408493621,  # Same step distance
-        'PRINT_FEEDRATE': 1800,  # 30 mm/s * 60 = 1800 mm/min (same as first layer for this G-code)
-        'TRAVEL_FEEDRATE': 7200,  # 120 mm/s * 60 = 7200 mm/min
+        'PRINT_SPEED': 1800,  # 30 mm/s * 60 = 1800 mm/min (same as first layer for this G-code)
+        'TRAVEL_SPEED': 7200,  # 120 mm/s * 60 = 7200 mm/min
         'FILAMENT_DIAMETER': 1.7,
         'EXTRUSION_MULTIPLIER': 1.0
     }
@@ -48,7 +48,7 @@ other_layers_test_data = {
 
 
 @pytest.mark.retraction
-@pytest.mark.retraction.perimeter
+@pytest.mark.perimeter
 def test_first_layer_perimeter(results_dir):
     """Test first layer perimeter generation (140% line width, 0.25mm height)."""
     diff_count = run_gcode_comparison_test(results_dir,
@@ -61,7 +61,7 @@ def test_first_layer_perimeter(results_dir):
 
 
 @pytest.mark.retraction
-@pytest.mark.retraction.perimeter
+@pytest.mark.perimeter
 def test_other_layers_perimeter(results_dir):
     """Test other layers perimeter generation (112.5% line width, 0.2mm height)."""
     diff_count = run_gcode_comparison_test(results_dir,
