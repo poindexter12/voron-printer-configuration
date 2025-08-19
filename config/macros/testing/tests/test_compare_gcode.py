@@ -12,7 +12,7 @@ test_cases = [
     {
         'name': 'first_layer',
         'orig_file': '../fixtures/expected_gcode/perimeter_first_layer.gcode',
-        'render_file': '../fixtures/macro_templates/draw_perimeter_layer.cfg',
+        'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
         'params': {
             'START_X': 132.6417,
             'START_Y': 148.0068,
@@ -31,7 +31,7 @@ test_cases = [
     {
         'name': 'other_layers',
         'orig_file': '../fixtures/expected_gcode/perimeter_other_layers.gcode',
-        'render_file': '../fixtures/macro_templates/draw_perimeter_layer.cfg',
+        'render_file': '../../retraction_test/draw_perimeter_layer.cfg',
         'params': {
             'START_X': 132.6417,
             'START_Y': 190.9396,  # Different Y start for subsequent layers
