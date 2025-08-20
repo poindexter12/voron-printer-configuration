@@ -1,3 +1,8 @@
+---
+description: Python testing patterns and pytest standards
+globs: ["**/*test*.py", "**/conftest.py"]
+alwaysApply: true
+---
 
 # Python Testing Patterns
 

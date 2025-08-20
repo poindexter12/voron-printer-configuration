@@ -1,6 +1,7 @@
 ---
 description: Enforces general Python coding style guidelines including indentation, line length, and commenting style.
-globs: **/*.py
+globs: ["**/*.py"]
+alwaysApply: true
 ---
 
 # Python Coding Standards Rules

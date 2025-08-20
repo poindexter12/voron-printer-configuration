@@ -1,3 +1,8 @@
+---
+description: Cursor rules overview and organization
+globs: ["**/*.mdc", "**/*.md"]
+alwaysApply: true
+---
 
 # Cursor Rules Overview
 

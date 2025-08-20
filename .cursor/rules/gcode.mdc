@@ -1,3 +1,8 @@
+---
+description: G-code, Klipper configuration, and macro creation patterns
+globs: ["**/*.cfg", "**/*.gcode", "**/*.j2"]
+alwaysApply: true
+---
 
 # G-code, Klipper Configuration, and Macro Creation Patterns
 
@@ -54,6 +59,7 @@ gcode:
 - **ALWAYS type Jinja variables** when setting them (e.g., `| float`, `| int`)
 - **Include descriptions** for all parameters
 - **Use consistent naming** for similar parameters across macros
+- **Macros cannot access parameters from other macros** so don't try to do that
 
 ## Jinja Variable Typing
 

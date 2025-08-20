@@ -1,3 +1,9 @@
+---
+description: Logging practices and configuration for all file types
+globs: ["**/*.py", "**/*.cfg", "**/*.gcode"]
+alwaysApply: true
+---
+
 # Logging Rules
 
 ## General Logging Principles
