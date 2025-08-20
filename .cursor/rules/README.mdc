@@ -1,0 +1,37 @@
+
+# Cursor Rules Overview
+
+This directory contains organized rules for different aspects of the Voron printer configuration project.
+
+## Rule Files
+
+- **rules.mdc** - Repository-wide patterns and file organization
+- **markdown.mdc** - Markdown formatting standards
+- **gcode.mdc** - G-code, Klipper configuration, and macro creation patterns
+- **python-core.mdc** - General Python coding patterns and standards
+- **python-testing.mdc** - Python-specific testing patterns and pytest standards
+- **python-coding-standards.mdc** - Python coding style guidelines (indentation, line length, comments)
+- **logging.mdc** - Logging practices and configuration for all file types
+
+## Usage
+
+Each rule file applies to specific file types and directories based on the `globs` pattern. Rules marked with `alwaysApply: true` will be automatically applied to all matching files.
+
+## Key Principles
+
+- UPPERCASE for macro parameters
+- Always use `params.PARAM_NAME` for Jinja variables
+- Test data dictionary at top, clean function below
+- Consistent markdown formatting
+- Logical file organization
+
+## File Coverage
+
+- **gcode.mdc**: All `.cfg`, `.gcode`, and `.j2` files (includes macros)
+- **python-core.mdc**: All `.py` files (general Python standards)
+- **python-testing.mdc**: Test files (`test_*.py`, `conftest.py`)
+- **python-coding-standards.mdc**: All `.py` files (coding style)
+- **logging.mdc**: All `.py`, `.cfg`, and `.gcode` files (logging practices)
+- **markdown.mdc**: All `.md` and `.mdc` files
+- **rules.mdc**: All files (repository-wide patterns)
+

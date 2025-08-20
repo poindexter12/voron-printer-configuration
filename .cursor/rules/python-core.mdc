@@ -1,0 +1,14 @@
+---
+description: Python coding patterns and standards
+globs: ["**/*.py"]
+---
+
+# Python Coding Patterns
+
+## General Python Standards
+
+- Follow PEP 8 style guidelines
+- Use descriptive variable names
+- Include proper docstrings for functions and classes
+- Use type hints where appropriate
+- Keep functions focused and single-purpose

@@ -1,0 +1,13 @@
+---
+description: Repository-wide rules and patterns
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Repository-wide rules
+
+## File Organization
+
+- Keep related files grouped logically
+- Use consistent naming conventions
+- Document purpose and relationships clearly

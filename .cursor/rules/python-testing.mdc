@@ -1,4 +1,11 @@
-# Testing-specific patterns for Klipper macro testing
+
+# Python Testing Patterns
+
+## Test Structure Pattern
+
+- **Test data dictionary at top, clean function below**
+- Use simple functions instead of classes for tests
+- Keep test functions focused and simple
 
 ## Test File Structure Pattern
 
@@ -61,3 +68,4 @@ def test_[feature]_macro(results_dir):
 2. Update the test data dictionary with your specific parameters
 3. Keep the same function structure
 4. Use appropriate pytest markers
+

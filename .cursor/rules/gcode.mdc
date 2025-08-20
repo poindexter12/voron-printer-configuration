@@ -1,6 +1,14 @@
-# Macro-specific patterns for Klipper macro creation
+
+# G-code, Klipper Configuration, and Macro Creation Patterns
+
+## Code Patterns
+
+- ALWAYS use UPPERCASE for macro parameters
+- ALWAYS use params.PARAM_NAME when setting Jinja variables
+- Test data dictionary at top, clean function below
 
 ## CRITICAL RULE - PARAMETER ACCESS
+
 - **ALWAYS use `params.PARAM_NAME` when setting Jinja variables**
 - **NEVER use just `PARAM_NAME` - this will cause errors**
 - **Example: `{% set value = params.START_X | float %}` NOT `{% set value = START_X | float %}`**
@@ -50,16 +58,25 @@ gcode:
 ## Jinja Variable Typing
 
 When setting Jinja variables, ALWAYS specify the type:
-- **`{% set value = params.PARAM | float %}`** - For decimal numbers (speeds, distances, coordinates)
-- **`{% set value = params.PARAM | int %}`** - For whole numbers (counts, iterations)
-- **`{% set value = params.PARAM | string %}`** - For text (messages, names)
+
+- **`{% set value = params.PARAM|float %}`** - For decimal numbers (speeds, distances, coordinates)
+- **`{% set value = params.PARAM|int %}`** - For whole numbers (counts, iterations)
+- **`{% set value = params.PARAM|string %}`** - For text (messages, names)
 
 Examples:
+
 ```jinja2
-{% set start_x = params.START_X | float %}
-{% set num_iterations = params.COUNT | int %}
-{% set message = params.MESSAGE | string %}
+{% set start_x = params.START_X|float %}
+{% set num_iterations = params.COUNT|int %}
+{% set message = params.MESSAGE|string %}
 ```
+
+## G-code Structure
+
+- Use consistent indentation for G-code blocks
+- Include proper comments explaining complex operations
+- Group related G-code commands logically
+- Use Jinja variables for dynamic values, never hardcode parameters
 
 ## Examples from Our Work
 
@@ -92,3 +109,4 @@ Examples:
 - Jinja variable extraction makes the code more readable and maintainable
 - Proper typing ensures Jinja2 renders values correctly
 - **CRITICAL: Always use `params.PARAM_NAME` when accessing parameters**
+- Use Jinja variables for dynamic values, never hardcode parameters

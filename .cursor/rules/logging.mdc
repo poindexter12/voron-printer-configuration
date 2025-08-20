@@ -1,0 +1,36 @@
+# Logging Rules
+
+## General Logging Principles
+
+- Use appropriate logging levels for different types of information
+- Include context and relevant details in log messages
+- Use consistent log message formatting across all file types
+- Configure appropriate log retention policies
+
+## Python Logging
+
+- Use the Python logging module for logging
+- Use log levels: debug, info, warn, error
+- Set a log retention policy of 7 days
+- Configure logging in the application's main module
+
+## Configuration File Logging
+
+- Use consistent comment formatting for logging important events
+- Include timestamps or version information in config files
+- Log configuration changes and their impact
+- Use descriptive names for configuration sections
+
+## G-code and Macro Logging
+
+- Include informative comments explaining complex operations
+- Log parameter values and their effects
+- Use consistent comment formatting for debugging
+- Document any conditional logic or error handling
+
+## Log Message Format
+
+- Use clear, descriptive language
+- Include relevant context (file, function, parameters)
+- Use consistent capitalization and punctuation
+- Avoid overly verbose or cryptic messages

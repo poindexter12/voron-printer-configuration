@@ -1,0 +1,15 @@
+---
+description: Markdown formatting rules and standards
+globs: ["**/*.md", "**/*.mdc"]
+alwaysApply: true
+---
+
+# Markdown Formatting Rules
+
+- **ALWAYS adhere to markdownlint rules** - Run markdownlint on all markdown files
+- **NEVER use bold on markdown headings** - `## Heading` NOT `## **Heading**`
+- **ALWAYS add blank lines between sections** - One blank line before and after each heading
+- **Use proper markdown syntax** - No invalid characters or formatting
+- **Keep headings clean** - Just `## Heading` without any extra formatting
+- **Use consistent spacing** - One blank line between sections, no extra spaces
+- **No trailing whitespace** - Clean line endings
