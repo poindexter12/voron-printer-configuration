@@ -10,7 +10,7 @@ outer_loop_test_data = {
     'orig_file': '../fixtures/expected_gcode/outer_loop_basic.gcode',
     'render_file': '../retraction_test/outer_loop.cfg',
     'params': {
-        'START_ADVANCE': 0,
+        'START_ADVANCE': 0.0,
         'END_ADVANCE': 0.01,
         'INCREMENT': 0.005,
         'START_X': 138.3898,
@@ -40,3 +40,6 @@ def test_basic_pressure_advance_loop(results_dir):
     )
     
     assert diff_count == 0, f"Outer loop macro test failed with {diff_count} differences"
+
+if __name__ == '__main__':
+    pytest.main([__file__])

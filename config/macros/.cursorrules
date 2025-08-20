@@ -1,11 +1,18 @@
 # Macro-specific patterns for Klipper macro creation
 
+## CRITICAL RULE - PARAMETER ACCESS
+- **ALWAYS use `params.PARAM_NAME` when setting Jinja variables**
+- **NEVER use just `PARAM_NAME` - this will cause errors**
+- **Example: `{% set value = params.START_X | float %}` NOT `{% set value = START_X | float %}`**
+
 ## Parameter Naming Convention
+
 - **ALWAYS use UPPERCASE for G-code macro parameters** (e.g., `START_X`, `PRINT_SPEED`, `Z_HOP_DISTANCE`)
 - **NEVER use lowercase for macro parameters** - this breaks the established pattern
 - **Use lowercase only for internal Jinja variables** (e.g., `current_x`, `num_iterations`)
 
 ## Macro Structure Pattern
+
 When creating Klipper macros, ALWAYS follow this structure:
 
 1. **Parameters section** with UPPERCASE names and descriptions
@@ -13,6 +20,7 @@ When creating Klipper macros, ALWAYS follow this structure:
 3. **Use the Jinja variables** throughout the macro, not the parameters directly
 
 ## Required Structure
+
 ```jinja2
 [gcode_macro _MACRO_NAME]
 description: Description of what the macro does
@@ -21,8 +29,8 @@ parameters:
   ANOTHER_PARAM: Description of another parameter
 gcode:
     ; Extract values from parameters into Jinja variables
-    {% set param_value = PARAM_NAME %}
-    {% set another_value = ANOTHER_PARAM %}
+    {% set param_value = params.PARAM_NAME | float %}
+    {% set another_value = params.ANOTHER_PARAM | int %}
     
     ; Use the Jinja variables throughout the macro
     G1 X{{ param_value }} Y{{ another_value }}
@@ -30,18 +38,37 @@ gcode:
 ```
 
 ## Key Rules
+
 - **Parameters MUST be UPPERCASE** - this is non-negotiable
+- **ALWAYS use `params.PARAM_NAME`** when setting Jinja variables
 - **ALWAYS set Jinja variables at the top** from the parameters
 - **Use Jinja variables in the G-code**, never reference parameters directly
+- **ALWAYS type Jinja variables** when setting them (e.g., `| float`, `| int`)
 - **Include descriptions** for all parameters
 - **Use consistent naming** for similar parameters across macros
 
+## Jinja Variable Typing
+
+When setting Jinja variables, ALWAYS specify the type:
+- **`{% set value = params.PARAM | float %}`** - For decimal numbers (speeds, distances, coordinates)
+- **`{% set value = params.PARAM | int %}`** - For whole numbers (counts, iterations)
+- **`{% set value = params.PARAM | string %}`** - For text (messages, names)
+
+Examples:
+```jinja2
+{% set start_x = params.START_X | float %}
+{% set num_iterations = params.COUNT | int %}
+{% set message = params.MESSAGE | string %}
+```
+
 ## Examples from Our Work
+
 - `retract_unretract.cfg` - Basic parameter extraction pattern
 - `outer_loop.cfg` - Complex loop with Jinja variable setup
 - `retraction_test.cfg` - Main macro with parameter definitions
 
 ## Common Parameter Names
+
 - `START_X`, `START_Y` - Starting positions
 - `STEP_DISTANCE` - Distance between steps
 - `PRINT_SPEED`, `TRAVEL_SPEED` - Speed values
@@ -50,14 +77,18 @@ gcode:
 - `LINE_WIDTH`, `LAYER_HEIGHT` - Print settings
 
 ## When Creating New Macros
+
 1. Define UPPERCASE parameters with descriptions
-2. Set Jinja variables at the top from the parameters
+2. Set Jinja variables at the top from the parameters with proper typing using `params.PARAM_NAME`
 3. Use Jinja variables throughout the macro
 4. Follow the established naming conventions
 5. Include proper comments and documentation
 
 ## Historical Context
+
 - We've established this pattern through multiple iterations
 - User explicitly requested UPPERCASE parameters after I incorrectly used lowercase
 - This maintains consistency with existing Klipper macro conventions
 - Jinja variable extraction makes the code more readable and maintainable
+- Proper typing ensures Jinja2 renders values correctly
+- **CRITICAL: Always use `params.PARAM_NAME` when accessing parameters**
