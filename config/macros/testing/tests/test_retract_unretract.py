@@ -21,8 +21,6 @@ retract_unretract_test_data = {
     }
 }
 
-
-
 @pytest.mark.retraction
 @pytest.mark.retract_unretract
 def test_retract_unretract_macro(results_dir):
