@@ -342,13 +342,18 @@ G0 X194.1246 Y200.5535 F7200 ; Move
 G1 X195.0038 Y199.6744 E0.06934 F1800 ; Fill
 G0 X195.0038 Y200.3904 F7200 ; Move
 G1 X194.8407 Y200.5535 E0.01286 F1800 ; Fill
+
+# moving to new layer
 G0 Z0.25 F7200 ; Move to layer height
+
+# retract and unretract
 G1 E-0.5 F2100 ; Retract
 G1 Z0.35 F7200 ; Z hop
 G0 X137.2384 Y149.8992 F7200 ; Move to pattern start
-
 G1 Z0.25 F7200 ; Z hop return
 G1 E0.5 F2100 ; Un-retract
+
+# start of layer
 SET_PRESSURE_ADVANCE ADVANCE=0 ; Set pressure advance
 M117 PA 0
 G1 X156.5592 Y169.22 E1.19281 F1800 ; Print pattern wall
@@ -740,10 +745,19 @@ G1 Z0.35 F7200 ; Z hop
 G0 X137.2384 Y149.8992 F7200 ; Move back to start position
 G1 Z0.25 F7200 ; Z hop return
 G1 E0.5 F2100 ; Un-retract
+# end of layer
+
+# change fan speed
 M106 S255 ; Set fan speed
+
+# move to layer height
 G0 Z0.45 F7200 ; Move to layer height
+
+# set pressure advance to start value for numbering
 SET_PRESSURE_ADVANCE ADVANCE=0 ; Set pressure advance to start value for numbering
 M117 PA 0
+
+# retract and unretract
 G1 E-0.5 F2100 ; Retract
 G1 Z0.55 F7200 ; Z hop
 G0 X133.9217 Y191.8832 F7200 ; Move

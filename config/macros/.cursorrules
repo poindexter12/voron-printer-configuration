@@ -1,0 +1,63 @@
+# Macro-specific patterns for Klipper macro creation
+
+## Parameter Naming Convention
+- **ALWAYS use UPPERCASE for G-code macro parameters** (e.g., `START_X`, `PRINT_SPEED`, `Z_HOP_DISTANCE`)
+- **NEVER use lowercase for macro parameters** - this breaks the established pattern
+- **Use lowercase only for internal Jinja variables** (e.g., `current_x`, `num_iterations`)
+
+## Macro Structure Pattern
+When creating Klipper macros, ALWAYS follow this structure:
+
+1. **Parameters section** with UPPERCASE names and descriptions
+2. **Jinja variable setup** at the beginning to extract values from params
+3. **Use the Jinja variables** throughout the macro, not the parameters directly
+
+## Required Structure
+```jinja2
+[gcode_macro _MACRO_NAME]
+description: Description of what the macro does
+parameters:
+  PARAM_NAME: Description of the parameter
+  ANOTHER_PARAM: Description of another parameter
+gcode:
+    ; Extract values from parameters into Jinja variables
+    {% set param_value = PARAM_NAME %}
+    {% set another_value = ANOTHER_PARAM %}
+    
+    ; Use the Jinja variables throughout the macro
+    G1 X{{ param_value }} Y{{ another_value }}
+    ; NOT: G1 X{{ PARAM_NAME }} Y{{ ANOTHER_PARAM }}
+```
+
+## Key Rules
+- **Parameters MUST be UPPERCASE** - this is non-negotiable
+- **ALWAYS set Jinja variables at the top** from the parameters
+- **Use Jinja variables in the G-code**, never reference parameters directly
+- **Include descriptions** for all parameters
+- **Use consistent naming** for similar parameters across macros
+
+## Examples from Our Work
+- `retract_unretract.cfg` - Basic parameter extraction pattern
+- `outer_loop.cfg` - Complex loop with Jinja variable setup
+- `retraction_test.cfg` - Main macro with parameter definitions
+
+## Common Parameter Names
+- `START_X`, `START_Y` - Starting positions
+- `STEP_DISTANCE` - Distance between steps
+- `PRINT_SPEED`, `TRAVEL_SPEED` - Speed values
+- `Z_HOP_DISTANCE`, `Z_HOP_RETURN` - Z hop values
+- `RETRACT_DISTANCE`, `RETRACT_SPEED`, `UNRETRACT_SPEED` - Retraction values
+- `LINE_WIDTH`, `LAYER_HEIGHT` - Print settings
+
+## When Creating New Macros
+1. Define UPPERCASE parameters with descriptions
+2. Set Jinja variables at the top from the parameters
+3. Use Jinja variables throughout the macro
+4. Follow the established naming conventions
+5. Include proper comments and documentation
+
+## Historical Context
+- We've established this pattern through multiple iterations
+- User explicitly requested UPPERCASE parameters after I incorrectly used lowercase
+- This maintains consistency with existing Klipper macro conventions
+- Jinja variable extraction makes the code more readable and maintainable

@@ -1,0 +1,63 @@
+# Testing-specific patterns for Klipper macro testing
+
+## Test File Structure Pattern
+
+When creating pytest test files, ALWAYS follow this established structure:
+
+1. **Test data dictionary at the top** with: name, orig_file, render_file, params
+2. **Clean test function** that calls the helper with the data
+3. **Use the same pattern** as test_retract_unretract.py and test_outer_loop.py
+
+## Required Structure
+
+```python
+"""Test suite for the [MACRO_NAME] macro functionality."""
+
+import pytest
+from utils.gcode_helpers import run_gcode_comparison_test
+
+# Test data for [feature] macro
+[feature]_test_data = {
+    'name': '[feature_name]',
+    'orig_file': '../fixtures/expected_gcode/[feature].gcode',
+    'render_file': '../[path]/[feature].cfg',
+    'params': {
+        # All parameters needed for the test
+    }
+}
+
+@pytest.mark.retraction
+@pytest.mark.[feature]
+def test_[feature]_macro(results_dir):
+    """Test the [feature] macro against expected output."""
+    diff_count = run_gcode_comparison_test(
+        results_dir,
+        [feature]_test_data['orig_file'],
+        [feature]_test_data['render_file'],
+        [feature]_test_data['params'],
+        [feature]_test_data['name']
+    )
+    
+    assert diff_count == 0, f"[Feature] macro test failed with {diff_count} differences"
+```
+
+## Key Rules
+
+- **NEVER create class-based tests** - use simple functions like the other tests
+- **ALWAYS put test data at the top** in a dictionary structure
+- **Use consistent naming**: `[feature]_test_data` for the dictionary
+- **Keep test functions simple** - just call the helper with the data
+- **Follow the exact parameter structure** shown above
+
+## Examples to Reference
+
+- `test_retract_unretract.py` - Basic macro testing
+- `test_outer_loop.py` - Complex loop macro testing
+- `test_retraction.py` - Layer-specific testing
+
+## When Adding New Tests
+
+1. Copy the structure from an existing test file
+2. Update the test data dictionary with your specific parameters
+3. Keep the same function structure
+4. Use appropriate pytest markers
