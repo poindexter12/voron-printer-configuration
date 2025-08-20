@@ -7,8 +7,8 @@ from utils.gcode_helpers import run_gcode_comparison_test
 # Test data for retract/unretract macro
 retract_unretract_test_data = {
     'name': 'retract_unretract',
-    'orig_file': '../fixtures/expected_gcode/retract_unretract.gcode',
-    'render_file': '../retraction_test/retract_unretract.cfg',
+    'orig_file': '../fixtures/expected_gcode/retraction_calibration/retract_unretract.gcode',
+    'render_file': '../retraction_calibration/retract_unretract.cfg',
     'params': {
         'Z_HOP_DISTANCE': 0.35,
         'Z_HOP_RETURN': 0.25,
@@ -21,7 +21,7 @@ retract_unretract_test_data = {
     }
 }
 
-@pytest.mark.retraction
+@pytest.mark.retraction_calibration
 @pytest.mark.retract_unretract
 def test_retract_unretract_macro(results_dir):
     """Test the _RETRACT_UNRETRACT macro against expected output."""

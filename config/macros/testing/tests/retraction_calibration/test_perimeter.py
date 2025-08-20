@@ -7,8 +7,8 @@ from utils.gcode_helpers import run_gcode_comparison_test
 # Test data for different layer types
 first_layer_test_data = {
     'name': 'first_layer',
-    'orig_file': '../fixtures/expected_gcode/perimeter_first_layer.gcode',
-    'render_file': '../retraction_test/draw_perimeter_layer.cfg',
+    'orig_file': '../fixtures/expected_gcode/retraction_calibration/perimeter_first_layer.gcode',
+    'render_file': '../retraction_calibration/draw_perimeter_layer.cfg',
     'params': {
         'START_X': 132.6417,
         'START_Y': 148.0068,
@@ -27,8 +27,8 @@ first_layer_test_data = {
 
 other_layers_test_data = {
     'name': 'other_layers',
-    'orig_file': '../fixtures/expected_gcode/perimeter_other_layers.gcode',
-    'render_file': '../retraction_test/draw_perimeter_layer.cfg',
+    'orig_file': '../fixtures/expected_gcode/retraction_calibration/perimeter_other_layers.gcode',
+    'render_file': '../retraction_calibration/draw_perimeter_layer.cfg',
     'params': {
         'START_X': 132.6417,
         'START_Y': 190.9396,  # Different Y start for subsequent layers
@@ -47,7 +47,7 @@ other_layers_test_data = {
 
 
 
-@pytest.mark.retraction
+@pytest.mark.retraction_calibration
 @pytest.mark.perimeter
 def test_first_layer_perimeter(results_dir):
     """Test first layer perimeter generation (140% line width, 0.25mm height)."""
@@ -60,7 +60,7 @@ def test_first_layer_perimeter(results_dir):
     assert diff_count == 0, f"{first_layer_test_data['name']} perimeter test failed: {diff_count} differences found"
 
 
-@pytest.mark.retraction
+@pytest.mark.retraction_calibration
 @pytest.mark.perimeter
 def test_other_layers_perimeter(results_dir):
     """Test other layers perimeter generation (112.5% line width, 0.2mm height)."""

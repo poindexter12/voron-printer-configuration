@@ -7,8 +7,8 @@ from utils.gcode_helpers import run_gcode_comparison_test
 # Test data for outer loop macro
 outer_loop_test_data = {
     'name': 'outer_loop_basic',
-    'orig_file': '../fixtures/expected_gcode/outer_loop_basic.gcode',
-    'render_file': '../retraction_test/outer_loop.cfg',
+    'orig_file': '../fixtures/expected_gcode/retraction_calibration/outer_loop_basic.gcode',
+    'render_file': '../retraction_calibration/outer_loop.cfg',
     'params': {
         'START_ADVANCE': 0.0,
         'END_ADVANCE': 0.01,
@@ -31,7 +31,7 @@ outer_loop_test_data = {
     }
 }
 
-@pytest.mark.retraction
+@pytest.mark.retraction_calibration
 @pytest.mark.outer_loop
 def test_basic_pressure_advance_loop(results_dir):
     """Test basic pressure advance loop with minimal values."""
