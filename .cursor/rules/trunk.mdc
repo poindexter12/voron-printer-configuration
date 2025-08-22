@@ -1,0 +1,171 @@
+---
+description: Trunk linting and code quality rules for all generated code
+globs: ["**/*.{js,ts,jsx,tsx,py,go,java,cs,cpp,c,h,hpp,sh,bash,zsh,yaml,yml,json,md}"]
+alwaysApply: true
+---
+
+# Trunk Code Quality and Linting Rules
+
+## Core Principles
+
+- **ALWAYS run Trunk checks on generated code** before considering it complete
+- **Automatically fix linting issues** when possible using `trunk fmt` and `trunk check --fix`
+- **Resolve all auto-fixable issues** without user intervention
+- **Prompt for guidance** only when manual decisions are required
+- **Maintain consistent code style** across all file types
+
+## Pre-Generation Setup
+
+Before generating any code:
+
+1. **Verify Trunk is available**: Ensure `trunk` CLI is accessible
+2. **Check current linting status**: Run `trunk check` to see existing issues
+3. **Update Trunk if needed**: Run `trunk upgrade` to ensure latest linters
+
+## Code Generation Workflow
+
+### 1. Generate Initial Code
+
+- Create the code according to user requirements
+- Use appropriate file extensions and structure
+
+### 2. Immediate Linting and Fixing
+
+After generating any code file:
+
+```bash
+# Format the file
+trunk fmt <filename>
+
+# Check for issues and auto-fix what's possible
+trunk check --fix <filename>
+
+# Run full check to identify remaining issues
+trunk check <filename>
+```
+
+### 3. Resolve Remaining Issues
+
+For each remaining linting issue:
+
+- **Auto-fixable**: Apply fixes automatically
+- **Style/formatting**: Adjust code to match linting rules
+- **Complex logic**: Simplify or restructure if needed
+- **Unclear requirements**: Ask user for clarification
+
+## Language-Specific Rules
+
+### JavaScript/TypeScript
+
+- **ESLint**: Follow `.eslintrc.json` configuration
+- **Prettier**: Ensure consistent formatting
+- **TypeScript**: Fix type errors and use proper typing
+- **Angular**: Follow Angular style guide and component patterns
+
+### Python
+
+- **Black**: Use Black formatter for consistent Python style
+- **Flake8**: Fix import order, line length, and style issues
+- **MyPy**: Resolve type annotation issues when possible
+
+### Go
+
+- **gofmt**: Format Go code according to Go standards
+- **golint**: Fix naming and style issues
+- **go vet**: Resolve common Go code issues
+
+### Shell Scripts
+
+- **shellcheck**: Fix shell script issues and improve portability
+- **shfmt**: Format shell scripts consistently
+
+### Markdown
+
+- **markdownlint**: Follow markdown best practices
+- **No trailing whitespace**
+- **Proper heading hierarchy**
+
+## Auto-Fixable Issues (Resolve Automatically)
+
+- **Formatting**: Indentation, spacing, line breaks
+- **Import organization**: Sort and group imports
+- **Naming conventions**: Follow language-specific patterns
+- **Unused imports/variables**: Remove when safe
+- **Line length**: Break long lines appropriately
+- **Trailing whitespace**: Remove all trailing spaces
+
+## Manual Resolution Required (Ask User)
+
+- **Business logic decisions**: When multiple approaches exist
+- **API design choices**: When interface decisions are needed
+- **Error handling strategy**: When multiple error handling approaches exist
+- **Performance optimizations**: When trade-offs between readability and performance exist
+- **Security considerations**: When security implications are unclear
+
+## Quality Standards
+
+### Code Style
+
+- **Consistent indentation**: Use spaces (2 for JS/TS, 4 for Python, tabs for Go)
+- **Naming conventions**: Follow language and project standards
+- **Line length**: Respect language-specific limits (80-120 characters)
+- **File organization**: Logical structure and clear separation of concerns
+
+### Documentation
+
+- **Function comments**: Clear descriptions of purpose and parameters
+- **Complex logic**: Explain non-obvious algorithms or business rules
+- **API documentation**: Document public interfaces and usage examples
+
+### Error Handling
+
+- **Graceful degradation**: Handle errors without crashing
+- **User-friendly messages**: Clear error messages for end users
+- **Logging**: Appropriate logging levels for debugging and monitoring
+
+## Post-Generation Verification
+
+After resolving all linting issues:
+
+1. **Final Trunk check**: `trunk check` should pass with no errors
+2. **Code review**: Ensure the generated code meets requirements
+3. **Documentation**: Update any relevant documentation
+4. **Testing**: Verify the code works as expected
+
+## Common Linting Issues and Solutions
+
+### JavaScript/TypeScript
+
+- **Unused variables**: Remove or prefix with underscore
+- **Missing semicolons**: Add where required by style guide
+- **Import order**: Sort alphabetically or by type
+- **Function complexity**: Break down complex functions
+
+### Python
+
+- **Line length**: Break long lines at logical points
+- **Import organization**: Group standard library, third-party, local imports
+- **Variable naming**: Use snake_case for variables and functions
+- **Docstrings**: Add proper docstrings for public functions
+
+### Go
+
+- **Package naming**: Use lowercase, single-word package names
+- **Variable naming**: Use camelCase for exported names, camelCase for unexported
+- **Error handling**: Always check and handle errors explicitly
+- **Interface design**: Keep interfaces small and focused
+
+## Emergency Override
+
+If Trunk rules conflict with critical functionality:
+
+1. **Document the override**: Add comments explaining why rules were bypassed
+2. **Minimize impact**: Apply override only to specific lines/sections
+3. **Future consideration**: Plan to address the underlying issue in future iterations
+
+## Continuous Improvement
+
+- **Monitor Trunk updates**: Keep linters and rules current
+- **Learn from issues**: Use linting feedback to improve code generation
+- **User feedback**: Incorporate user preferences for code style
+- **Performance**: Balance linting thoroughness with generation speed

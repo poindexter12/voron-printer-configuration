@@ -133,7 +133,7 @@ def test_digit_3_glyph(results_dir):
         digit_3_test_data['params'],
         digit_3_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Digit 3 glyph test failed with {diff_count} differences"
 
 @pytest.mark.retraction_calibration
@@ -147,7 +147,7 @@ def test_digit_4_glyph(results_dir):
         digit_4_test_data['params'],
         digit_4_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Digit 4 glyph test failed with {diff_count} differences"
 
 @pytest.mark.retraction_calibration
@@ -161,7 +161,7 @@ def test_digit_5_glyph(results_dir):
         digit_5_test_data['params'],
         digit_5_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Digit 5 glyph test failed with {diff_count} differences"
 
 @pytest.mark.retraction_calibration
@@ -175,7 +175,7 @@ def test_digit_6_glyph(results_dir):
         digit_6_test_data['params'],
         digit_6_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Digit 6 glyph test failed with {diff_count} differences"
 
 @pytest.mark.retraction_calibration
@@ -189,7 +189,7 @@ def test_digit_7_glyph(results_dir):
         digit_7_test_data['params'],
         digit_7_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Digit 7 glyph test failed with {diff_count} differences"
 
 @pytest.mark.retraction_calibration
@@ -203,5 +203,5 @@ def test_digit_8_glyph(results_dir):
         digit_8_test_data['params'],
         digit_8_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Digit 8 glyph test failed with {diff_count} differences"
