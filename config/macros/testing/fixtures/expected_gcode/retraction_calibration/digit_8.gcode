@@ -1,0 +1,11 @@
+; Digit 8 glyph G-code snippet extracted from original.gcode
+; This represents the expected output for the _DRAW_DIGIT macro with DIGIT=8
+
+G1 X193.544 Y198.8832 E0.07174 F1800 ; Glyph: 8
+G1 X195.544 Y198.8832 E0.07174 F1800 ; Glyph: 8
+G1 X195.544 Y200.8832 E0.07174 F1800 ; Glyph: 8
+G1 X193.544 Y200.8832 E0.07174 F1800 ; Glyph: 8
+G1 X191.544 Y200.8832 E0.07174 F1800 ; Glyph: 8
+G1 X191.544 Y198.8832 E0.07174 F1800 ; Glyph: 8
+G0 X193.544 Y198.8832 F7200 ; Move
+G1 X193.544 Y200.8832 E0.07174 F1800 ; Glyph: 8
