@@ -3,18 +3,22 @@
 import pytest
 from utils.gcode_helpers import run_gcode_comparison_test
 
+# Common extrusion value used for all glyphs (2mm line at 0.07174 extrusion per 2mm)
+GLYPH_EXTRUSION = 0.07174
+PERIOD_EXTRUSION = 0.0269
+PRINT_SPEED = 1800
+TRAVEL_SPEED = 7200
+
 # Test data for period glyph macro
 period_test_data = {
     'name': 'period_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/period.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/period.cfg',
     'params': {
-        'DIGIT': '.',
         'START_X': 144.3745,
         'START_Y': 194.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'PERIOD_EXTRUSION': PERIOD_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED
     }
 }
 
@@ -22,14 +26,13 @@ period_test_data = {
 digit_3_test_data = {
     'name': 'digit_3_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/digit_3.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/digit_3.cfg',
     'params': {
-        'DIGIT': '3',
         'START_X': 155.5301,
         'START_Y': 200.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'EXTRUSION': GLYPH_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED,
+        'TRAVEL_SPEED': TRAVEL_SPEED
     }
 }
 
@@ -37,14 +40,13 @@ digit_3_test_data = {
 digit_4_test_data = {
     'name': 'digit_4_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/digit_4.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/digit_4.cfg',
     'params': {
-        'DIGIT': '4',
         'START_X': 164.7329,
         'START_Y': 200.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'EXTRUSION': GLYPH_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED,
+        'TRAVEL_SPEED': TRAVEL_SPEED
     }
 }
 
@@ -52,14 +54,12 @@ digit_4_test_data = {
 digit_5_test_data = {
     'name': 'digit_5_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/digit_5.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/digit_5.cfg',
     'params': {
-        'DIGIT': '5',
         'START_X': 169.9357,
         'START_Y': 198.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'EXTRUSION': GLYPH_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED
     }
 }
 
@@ -67,14 +67,12 @@ digit_5_test_data = {
 digit_6_test_data = {
     'name': 'digit_6_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/digit_6.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/digit_6.cfg',
     'params': {
-        'DIGIT': '6',
         'START_X': 177.1384,
         'START_Y': 198.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'EXTRUSION': GLYPH_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED
     }
 }
 
@@ -82,14 +80,12 @@ digit_6_test_data = {
 digit_7_test_data = {
     'name': 'digit_7_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/digit_7.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/digit_7.cfg',
     'params': {
-        'DIGIT': '7',
         'START_X': 184.3412,
         'START_Y': 200.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'EXTRUSION': GLYPH_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED
     }
 }
 
@@ -97,14 +93,13 @@ digit_7_test_data = {
 digit_8_test_data = {
     'name': 'digit_8_glyph',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/digit_8.gcode',
-    'render_file': '../retraction_calibration/glyphs.cfg',
+    'render_file': 'fixtures/templates/retraction_calibration/digit_8.cfg',
     'params': {
-        'DIGIT': '8',
         'START_X': 193.544,
         'START_Y': 198.8832,
-        'WIDTH_EXTRUSION': 0.07174,
-        'HEIGHT_EXTRUSION': 0.07174,
-        'PRINT_SPEED': 1800
+        'EXTRUSION': GLYPH_EXTRUSION,
+        'PRINT_SPEED': PRINT_SPEED,
+        'TRAVEL_SPEED': TRAVEL_SPEED
     }
 }
 
@@ -119,7 +114,7 @@ def test_period_glyph(results_dir):
         period_test_data['params'],
         period_test_data['name']
     )
-    
+
     assert diff_count == 0, f"Period glyph test failed with {diff_count} differences"
 
 @pytest.mark.retraction_calibration

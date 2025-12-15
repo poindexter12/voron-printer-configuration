@@ -1,5 +1,6 @@
 """Utility functions for G-code processing and testing."""
 
+import difflib
 import os
 import re
 from jinja2 import Template
@@ -29,9 +30,17 @@ def clean_gcode_file(path, render_jinja=False, params=None):
             continue
         if line.startswith('[') or line.startswith(';') or line.startswith('#'):
             continue
-        if '{%' in line or ':' in line:
+        if '{%' in line:
             continue
-        cleaned.append(line)
+        # Skip Klipper parameter lines (e.g., "DIGIT: 3") but not G-code with inline comments
+        # G-code lines start with G or M, so only check for : in non-gcode lines
+        if ':' in line and not line.startswith(('G', 'M')):
+            continue
+        # Strip inline comments from G-code for comparison
+        if ';' in line:
+            line = line.split(';')[0].strip()
+        if line:  # Make sure we still have content after stripping comment
+            cleaned.append(line)
     return cleaned
 
 
@@ -65,7 +74,6 @@ def diff_with_html(original_lines, generated_lines, original_name="original", ge
     Returns:
         HTML string with formatted diff
     """
-    import difflib
     html_diff = difflib.HtmlDiff()
     return html_diff.make_file(original_lines, generated_lines, original_name, generated_name)
 
@@ -104,8 +112,10 @@ def run_gcode_comparison_test(results_dir, orig_file, render_file, params, test_
         os.path.basename(render_path)
     )
 
-    # Count actual differences (lines that start with + or -)
-    diff_count = sum(1 for line in html_diff.split('\n') if line.startswith('<td class="diff_add">') or line.startswith('<td class="diff_sub">'))
+    # Count actual differences using unified diff (more reliable than parsing HTML)
+    unified = list(difflib.unified_diff(orig_cleaned, render_cleaned, lineterm=''))
+    # Count lines starting with + or - (excluding the +++ and --- header lines)
+    diff_count = sum(1 for line in unified if (line.startswith('+') or line.startswith('-')) and not line.startswith('+++') and not line.startswith('---'))
 
     # Save HTML diff for easier viewing
     html_diff_path = os.path.join(results_dir, f'{test_name}_diff.html')

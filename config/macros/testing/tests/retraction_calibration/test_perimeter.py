@@ -31,14 +31,14 @@ other_layers_test_data = {
     'render_file': '../retraction_calibration/draw_perimeter_layer.cfg',
     'params': {
         'START_X': 132.6417,
-        'START_Y': 190.9396,  # Different Y start for subsequent layers
+        'START_Y': 190.9396,  # Top rectangle Y start (still on first layer Z0.25)
         'WIDTH': 64.2545,  # Actual width from expected G-code: 196.8962 - 132.6417
         'HEIGHT': 11.5063,  # Actual height from expected G-code: 202.4459 - 190.9396
-        'LINE_WIDTH': 0.45,  # 112.5% of 0.4mm nozzle
-        'LAYER_HEIGHT': 0.2,  # Subsequent layer height from G-code header
+        'LINE_WIDTH': 0.56,  # Same as first layer (both rectangles at Z0.25)
+        'LAYER_HEIGHT': 0.25,  # First layer height (both rectangles at Z0.25)
         'NUM_PERIMETERS': 4,
         'STEP_DISTANCE': 0.5063495408493621,  # Same step distance
-        'PRINT_SPEED': 1800,  # 30 mm/s * 60 = 1800 mm/min (same as first layer for this G-code)
+        'PRINT_SPEED': 1800,  # 30 mm/s * 60 = 1800 mm/min
         'TRAVEL_SPEED': 7200,  # 120 mm/s * 60 = 7200 mm/min
         'FILAMENT_DIAMETER': 1.7,
         'EXTRUSION_MULTIPLIER': 1.0

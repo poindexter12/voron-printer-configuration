@@ -4,23 +4,23 @@ import pytest
 
 from utils.gcode_helpers import run_gcode_comparison_test
 
-# Test data for outer loop macro
+# Test data for outer loop macro - parameters extracted from original.gcode
 outer_loop_test_data = {
     'name': 'outer_loop_basic',
     'orig_file': '../fixtures/expected_gcode/retraction_calibration/outer_loop_basic.gcode',
     'render_file': '../retraction_calibration/outer_loop.cfg',
     'params': {
         'START_ADVANCE': 0.0,
-        'END_ADVANCE': 0.01,
+        'END_ADVANCE': 0.08,
         'INCREMENT': 0.005,
-        'START_X': 138.3898,
+        'START_X': 137.2384,
         'START_Y': 149.8992,
         'Y_START': 188.5408,
         'Y_END': 169.22,
         'E_INCREMENT': 1.19281,
-        'X_WALL_OFFSET': 21.3508,
+        'X_WALL_OFFSET': 19.3208,
         'STEP_DISTANCE': 0.5757,
-        'GROUP_SPACING': 2.5853,
+        'GROUP_SPACING': 1.8743,
         'PRINT_SPEED': 1800,
         'TRAVEL_SPEED': 7200,
         'Z_HOP_DISTANCE': 0.35,
