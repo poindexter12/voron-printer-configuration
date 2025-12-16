@@ -10,6 +10,17 @@ from jinja2 import Environment
 # See: https://www.klipper3d.org/Command_Templates.html
 KLIPPER_ENV = Environment('{%', '%}', '{', '}')
 
+# Add Python built-ins that Klipper's Jinja2 environment provides
+KLIPPER_ENV.globals['str'] = str
+KLIPPER_ENV.globals['int'] = int
+KLIPPER_ENV.globals['float'] = float
+KLIPPER_ENV.globals['range'] = range
+KLIPPER_ENV.globals['len'] = len
+KLIPPER_ENV.globals['abs'] = abs
+KLIPPER_ENV.globals['min'] = min
+KLIPPER_ENV.globals['max'] = max
+KLIPPER_ENV.globals['round'] = round
+
 
 def extract_macro_gcode(file_path, macro_name):
     """Extract the gcode section from a Klipper macro file.
