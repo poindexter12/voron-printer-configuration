@@ -1,13 +1,19 @@
-"""Test suite for the fill macro functionality."""
+"""Test suite for the _FILL macro.
+
+Tests verify that the actual macro from fill.cfg
+produces expected G-code output.
+"""
 
 import pytest
-from utils.gcode_helpers import run_gcode_comparison_test
+from utils.gcode_helpers import run_macro_comparison_test
+
+# Path to the actual macro file (relative to testing directory)
+MACRO_FILE = '../retraction_calibration/fill.cfg'
+MACRO_NAME = '_FILL'
 
 # Test data for fill macro - diagonal fill pattern
 fill_test_data = {
-    'name': 'fill_macro',
-    'orig_file': '../fixtures/expected_gcode/retraction_calibration/fill.gcode',
-    'render_file': '../retraction_calibration/fill.cfg',
+    'expected_file': '../fixtures/expected_gcode/retraction_calibration/fill.gcode',
     'params': {
         'MIN_X': 134.5341,
         'MAX_X': 195.0038,
@@ -20,16 +26,17 @@ fill_test_data = {
     }
 }
 
-@pytest.mark.retraction
+
+@pytest.mark.retraction_calibration
 @pytest.mark.fill
 def test_fill_macro(results_dir):
-    """Test the fill macro against expected output."""
-    diff_count = run_gcode_comparison_test(
+    """Test _FILL macro produces correct diagonal fill pattern."""
+    diff_count = run_macro_comparison_test(
         results_dir,
-        fill_test_data['orig_file'],
-        fill_test_data['render_file'],
+        fill_test_data['expected_file'],
+        MACRO_FILE,
+        MACRO_NAME,
         fill_test_data['params'],
-        fill_test_data['name']
+        'fill_macro'
     )
-    
     assert diff_count == 0, f"Fill macro test failed with {diff_count} differences"

@@ -3,25 +3,178 @@
 import difflib
 import os
 import re
-from jinja2 import Template
+from jinja2 import Environment
 
 
-def klipper_to_jinja(text):
-    """Convert Klipper-style {variable} to Jinja2-style {{ variable }}."""
-    converted = re.sub(r'(?<!\{)\{([a-zA-Z0-9_]+)\}(?!\})', r'{{ \1 }}', text)
-    return converted
+# Klipper uses a custom Jinja2 environment with single braces for expressions
+# See: https://www.klipper3d.org/Command_Templates.html
+KLIPPER_ENV = Environment('{%', '%}', '{', '}')
+
+
+def extract_macro_gcode(file_path, macro_name):
+    """Extract the gcode section from a Klipper macro file.
+
+    Args:
+        file_path: Path to the .cfg file containing the macro
+        macro_name: Name of the macro (e.g., '_DRAW_DIGIT')
+
+    Returns:
+        String containing just the gcode section of the macro
+    """
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # Find the macro section
+    macro_pattern = rf'\[gcode_macro\s+{re.escape(macro_name)}\]'
+    macro_match = re.search(macro_pattern, content, re.IGNORECASE)
+    if not macro_match:
+        raise ValueError(f"Macro '{macro_name}' not found in {file_path}")
+
+    # Get content after the macro header
+    after_header = content[macro_match.end():]
+
+    # Find the gcode: section
+    gcode_match = re.search(r'^gcode:\s*\n', after_header, re.MULTILINE)
+    if not gcode_match:
+        raise ValueError(f"No 'gcode:' section found in macro '{macro_name}'")
+
+    gcode_start = gcode_match.end()
+
+    # Find where the gcode section ends (next [section] or end of file)
+    next_section = re.search(r'^\[', after_header[gcode_start:], re.MULTILINE)
+    if next_section:
+        gcode_content = after_header[gcode_start:gcode_start + next_section.start()]
+    else:
+        gcode_content = after_header[gcode_start:]
+
+    return gcode_content
+
+
+def render_macro_gcode(file_path, macro_name, params):
+    """Extract and render gcode from a Klipper macro with given parameters.
+
+    Args:
+        file_path: Path to the .cfg file containing the macro
+        macro_name: Name of the macro (e.g., '_DRAW_DIGIT')
+        params: Dictionary of parameters to pass to the template
+
+    Returns:
+        Rendered gcode as a string
+    """
+    gcode_template = extract_macro_gcode(file_path, macro_name)
+    template = KLIPPER_ENV.from_string(gcode_template)
+    return template.render(params=params)
+
+
+def clean_gcode_string(content):
+    """Clean a G-code string for comparison.
+
+    Args:
+        content: String containing G-code
+
+    Returns:
+        List of cleaned G-code lines
+    """
+    lines = content.splitlines()
+    cleaned = []
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith('[') or line.startswith(';') or line.startswith('#'):
+            continue
+        if '{%' in line:
+            continue
+        # Skip Klipper parameter lines but not G-code with inline comments
+        if ':' in line and not line.startswith(('G', 'M', '_')):
+            continue
+        # Strip inline comments from G-code for comparison
+        if ';' in line:
+            line = line.split(';')[0].strip()
+        if line:
+            cleaned.append(line)
+    return cleaned
+
+
+def run_macro_comparison_test(results_dir, expected_file, macro_file, macro_name, params, test_name):
+    """Compare output of a Klipper macro against expected G-code.
+
+    Args:
+        results_dir: Directory to save test results
+        expected_file: Path to the expected G-code file
+        macro_file: Path to the .cfg file containing the macro
+        macro_name: Name of the macro to test (e.g., '_DRAW_DIGIT')
+        params: Parameters to pass to the macro
+        test_name: Name for the test (used in output files)
+
+    Returns:
+        diff_count: Number of differences found
+    """
+    expected_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests', expected_file)
+    macro_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), macro_file)
+
+    # Load expected G-code
+    expected_cleaned = clean_gcode_file(expected_path)
+
+    # Render and clean macro output
+    rendered = render_macro_gcode(macro_path, macro_name, params)
+    rendered_cleaned = clean_gcode_string(rendered)
+
+    # Save cleaned files
+    rendered_path = os.path.join(results_dir, f'{test_name}_rendered.gcode')
+    with open(rendered_path, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(rendered_cleaned) + '\n')
+
+    expected_clean_path = os.path.join(results_dir, f'{test_name}_expected.gcode')
+    with open(expected_clean_path, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(expected_cleaned) + '\n')
+
+    # Generate HTML diff
+    html_diff = diff_with_html(
+        expected_cleaned,
+        rendered_cleaned,
+        os.path.basename(expected_path),
+        f"{macro_name} output"
+    )
+
+    # Count differences
+    unified = list(difflib.unified_diff(expected_cleaned, rendered_cleaned, lineterm=''))
+    diff_count = sum(1 for line in unified if (line.startswith('+') or line.startswith('-'))
+                     and not line.startswith('+++') and not line.startswith('---'))
+
+    # Save HTML diff
+    html_diff_path = os.path.join(results_dir, f'{test_name}_diff.html')
+    with open(html_diff_path, 'w', encoding='utf-8') as f:
+        f.write(html_diff)
+
+    # Log results
+    log_path = os.path.join(results_dir, f'{test_name}_test.log')
+    with open(log_path, 'w', encoding='utf-8') as f:
+        f.write(f"{test_name.title().replace('_', ' ')} Test Results\n")
+        f.write(f"Expected: {expected_file}\n")
+        f.write(f"Macro: {macro_name} from {macro_file}\n")
+        f.write(f"Total differences: {diff_count}\n")
+
+    if diff_count > 0:
+        print(f"{test_name}: {diff_count} differences found")
+        print(f"See {os.path.relpath(html_diff_path)} for details")
+
+    return diff_count
 
 
 def clean_gcode_file(path, render_jinja=False, params=None):
     """Read a file, optionally render as Jinja2 with given parameters,
-    and return cleaned lines."""
+    and return cleaned lines.
+
+    Uses Klipper's Jinja2 environment (single braces for expressions).
+    """
     if params is None:
         params = {}
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
         if render_jinja:
-            content = klipper_to_jinja(content)
-            content = Template(content).render(params=params)
+            template = KLIPPER_ENV.from_string(content)
+            content = template.render(params=params)
         lines = content.splitlines()
     cleaned = []
     for line in lines:

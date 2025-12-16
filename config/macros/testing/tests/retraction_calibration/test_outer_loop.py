@@ -1,14 +1,19 @@
-"""Test suite for the _PRESSURE_ADVANCE_LOOP macro functionality."""
+"""Test suite for the _PRESSURE_ADVANCE_LOOP macro.
+
+Tests verify that the actual macro from outer_loop.cfg
+produces expected G-code output.
+"""
 
 import pytest
+from utils.gcode_helpers import run_macro_comparison_test
 
-from utils.gcode_helpers import run_gcode_comparison_test
+# Path to the actual macro file (relative to testing directory)
+MACRO_FILE = '../retraction_calibration/outer_loop.cfg'
+MACRO_NAME = '_PRESSURE_ADVANCE_LOOP'
 
 # Test data for outer loop macro - parameters extracted from original.gcode
 outer_loop_test_data = {
-    'name': 'outer_loop_basic',
-    'orig_file': '../fixtures/expected_gcode/retraction_calibration/outer_loop_basic.gcode',
-    'render_file': '../retraction_calibration/outer_loop.cfg',
+    'expected_file': '../fixtures/expected_gcode/retraction_calibration/outer_loop_basic.gcode',
     'params': {
         'START_ADVANCE': 0.0,
         'END_ADVANCE': 0.08,
@@ -31,19 +36,17 @@ outer_loop_test_data = {
     }
 }
 
+
 @pytest.mark.retraction_calibration
 @pytest.mark.outer_loop
 def test_basic_pressure_advance_loop(results_dir):
-    """Test basic pressure advance loop with minimal values."""
-    diff_count = run_gcode_comparison_test(
+    """Test _PRESSURE_ADVANCE_LOOP macro produces correct output."""
+    diff_count = run_macro_comparison_test(
         results_dir,
-        outer_loop_test_data['orig_file'],
-        outer_loop_test_data['render_file'],
+        outer_loop_test_data['expected_file'],
+        MACRO_FILE,
+        MACRO_NAME,
         outer_loop_test_data['params'],
-        outer_loop_test_data['name']
+        'outer_loop_basic'
     )
-    
     assert diff_count == 0, f"Outer loop macro test failed with {diff_count} differences"
-
-if __name__ == '__main__':
-    pytest.main([__file__])
