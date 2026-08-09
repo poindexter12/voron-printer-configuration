@@ -9,6 +9,7 @@
 !/database/
 !/backup/
 !/simulator/
+!/ssh/
 !/*.md
 
 # Ignore all .env files anywhere in the tree

@@ -1,0 +1,9 @@
+# Voron 2.4 printer (Raspberry Pi, hostname voron-printer).
+# Key: 1Password item "voron-printer" (ED25519, served by the 1P agent).
+# Pinned pub + IdentitiesOnly so the agent doesn't spam unrelated keys
+# into the server's MaxAuthTries limit.
+Host trusted.voron-printer.home.arpa voron-printer.home.arpa 192.168.1.154
+    User poindexter12
+    IdentityFile ~/.ssh/config.d/voron-printer/voron-printer.pub
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
