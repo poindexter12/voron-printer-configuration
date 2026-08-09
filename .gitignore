@@ -1,3 +1,16 @@
+# On the printer this repo IS printer_data, which contains runtime dirs
+# (gcodes/, logs/, comms/, .moonraker.uuid, ...) that must never be
+# committed by the hourly backup. Whitelist the intentional content.
+/*
+
+# Except these
+!/.gitignore
+!/config/
+!/database/
+!/backup/
+!/simulator/
+!/*.md
+
 # Ignore all .env files anywhere in the tree
 **/.env
 
