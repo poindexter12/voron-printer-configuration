@@ -10,6 +10,11 @@ to the original handcrafted G-code.
 
 import pytest
 from pathlib import Path
+
+mcu_compare = pytest.importorskip(
+    "utils.mcu_compare",
+    reason="utils/mcu_compare.py was never committed; MCU batch-mode testing unavailable"
+)
 from utils.mcu_compare import (
     check_docker_image,
     run_gcode_batch,
