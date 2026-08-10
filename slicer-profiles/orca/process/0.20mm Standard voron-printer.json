@@ -17,5 +17,6 @@
     "compatible_printers": [
         "Voron 2.4 350 voron-printer",
         "Voron 2.4 350 0.4 nozzle"
-    ]
+    ],
+    "brim_type": "outer_only"
 }
