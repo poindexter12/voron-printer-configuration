@@ -11,6 +11,7 @@
 !/simulator/
 !/ssh/
 !/slicer-profiles/
+!/models/
 !/*.md
 
 # Ignore all .env files anywhere in the tree
