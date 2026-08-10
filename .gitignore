@@ -10,6 +10,7 @@
 !/backup/
 !/simulator/
 !/ssh/
+!/slicer-profiles/
 !/*.md
 
 # Ignore all .env files anywhere in the tree

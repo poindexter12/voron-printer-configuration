@@ -1,0 +1,160 @@
+{
+    "type": "machine",
+    "name": "Voron 2.4 350 voron-printer",
+    "printer_technology": "FFF",
+    "deretraction_speed": [
+        "30"
+    ],
+    "extruder_colour": [
+        "#FCE94F"
+    ],
+    "extruder_offset": [
+        "0x0"
+    ],
+    "gcode_flavor": "klipper",
+    "silent_mode": "0",
+    "machine_max_acceleration_e": [
+        "5000",
+        "5000"
+    ],
+    "machine_max_acceleration_extruding": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_acceleration_retracting": [
+        "5000",
+        "5000"
+    ],
+    "machine_max_acceleration_x": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_acceleration_y": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_acceleration_z": [
+        "350",
+        "350"
+    ],
+    "machine_max_speed_e": [
+        "25",
+        "25"
+    ],
+    "machine_max_speed_x": [
+        "500",
+        "500"
+    ],
+    "machine_max_speed_y": [
+        "500",
+        "500"
+    ],
+    "machine_max_speed_z": [
+        "15",
+        "15"
+    ],
+    "machine_max_jerk_e": [
+        "2.5",
+        "2.5"
+    ],
+    "machine_max_jerk_x": [
+        "5",
+        "5"
+    ],
+    "machine_max_jerk_y": [
+        "5",
+        "5"
+    ],
+    "machine_max_jerk_z": [
+        "0.2",
+        "0.4"
+    ],
+    "machine_min_extruding_rate": [
+        "0",
+        "0"
+    ],
+    "machine_min_travel_rate": [
+        "0",
+        "0"
+    ],
+    "max_layer_height": [
+        "0.32"
+    ],
+    "min_layer_height": [
+        "0.10"
+    ],
+    "printable_height": "250",
+    "extruder_clearance_radius": "65",
+    "extruder_clearance_height_to_rod": "36",
+    "extruder_clearance_height_to_lid": "140",
+    "nozzle_diameter": [
+        "0.4"
+    ],
+    "printer_settings_id": "Voron 2.4 350 voron-printer",
+    "printer_variant": "0.4",
+    "retraction_minimum_travel": [
+        "1"
+    ],
+    "retract_before_wipe": [
+        "70%"
+    ],
+    "retract_when_changing_layer": [
+        "1"
+    ],
+    "retraction_length": [
+        "0.8"
+    ],
+    "retract_length_toolchange": [
+        "2"
+    ],
+    "z_hop": [
+        "0.4"
+    ],
+    "retract_restart_extra": [
+        "0"
+    ],
+    "retract_restart_extra_toolchange": [
+        "0"
+    ],
+    "retraction_speed": [
+        "30"
+    ],
+    "single_extruder_multi_material": "1",
+    "change_filament_gcode": "",
+    "wipe": [
+        "1"
+    ],
+    "default_print_profile": "0.20mm Standard voron-printer",
+    "before_layer_change_gcode": "BEFORE_LAYER_CHANGE HEIGHT=[layer_z] LAYER=[layer_num]",
+    "machine_start_gcode": "M190 S0\nM109 S0\n; PRINT_START_SET MODEL_MIN/MODEL_MAX omitted: OrcaSlicer has no model bounding_box placeholder\n_PRINT_START_PHASE_INIT EXTRUDER={nozzle_temperature_initial_layer[initial_extruder]} BED=[bed_temperature_initial_layer_single] MESH_MIN={first_layer_print_min[0]},{first_layer_print_min[1]} MESH_MAX={first_layer_print_max[0]},{first_layer_print_max[1]} LAYERS=[total_layer_count] NOZZLE_SIZE={nozzle_diameter[0]}\n_PRINT_START_PHASE_PREHEAT\n_PRINT_START_PHASE_PROBING\n_PRINT_START_PHASE_EXTRUDER\n_PRINT_START_PHASE_PURGE",
+    "machine_end_gcode": "PRINT_END",
+    "machine_max_acceleration_travel": [
+        "10000",
+        "10000"
+    ],
+    "z_hop_types": "Normal Lift",
+    "machine_pause_gcode": "PAUSE",
+    "default_filament_profile": [
+        "Polymaker PolyLite PLA Pro"
+    ],
+    "bed_exclude_area": [
+        "0x0"
+    ],
+    "layer_change_gcode": "AFTER_LAYER_CHANGE",
+    "scan_first_layer": "0",
+    "nozzle_type": "brass",
+    "auxiliary_fan": "0",
+    "printer_model": "Voron 2.4 350",
+    "printable_area": [
+        "0x0",
+        "350x0",
+        "350x350",
+        "0x350"
+    ],
+    "print_host": "http://192.168.1.154:7125",
+    "host_type": "moonraker",
+    "from": "User",
+    "is_custom_defined": "0",
+    "version": "2.4.2.0",
+    "inherits": "Voron 2.4 350 0.4 nozzle"
+}

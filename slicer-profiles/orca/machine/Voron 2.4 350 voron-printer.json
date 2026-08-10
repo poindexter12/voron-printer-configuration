@@ -1,0 +1,63 @@
+{
+    "type": "machine",
+    "name": "Voron 2.4 350 voron-printer",
+    "inherits": "Voron 2.4 350 0.4 nozzle",
+    "from": "User",
+    "is_custom_defined": "0",
+    "version": "2.4.2.0",
+    "printer_settings_id": "Voron 2.4 350 voron-printer",
+    "printer_variant": "0.4",
+    "gcode_flavor": "klipper",
+    "printable_height": "250",
+    "nozzle_type": "brass",
+    "machine_max_speed_x": [
+        "500",
+        "500"
+    ],
+    "machine_max_speed_y": [
+        "500",
+        "500"
+    ],
+    "machine_max_speed_z": [
+        "15",
+        "15"
+    ],
+    "machine_max_acceleration_x": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_acceleration_y": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_acceleration_z": [
+        "350",
+        "350"
+    ],
+    "machine_max_acceleration_extruding": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_acceleration_travel": [
+        "10000",
+        "10000"
+    ],
+    "machine_max_jerk_x": [
+        "5",
+        "5"
+    ],
+    "machine_max_jerk_y": [
+        "5",
+        "5"
+    ],
+    "print_host": "http://192.168.1.154:7125",
+    "host_type": "moonraker",
+    "machine_start_gcode": "M190 S0\nM109 S0\n; PRINT_START_SET MODEL_MIN/MODEL_MAX omitted: OrcaSlicer has no model bounding_box placeholder\n_PRINT_START_PHASE_INIT EXTRUDER={nozzle_temperature_initial_layer[initial_extruder]} BED=[bed_temperature_initial_layer_single] MESH_MIN={first_layer_print_min[0]},{first_layer_print_min[1]} MESH_MAX={first_layer_print_max[0]},{first_layer_print_max[1]} LAYERS=[total_layer_count] NOZZLE_SIZE={nozzle_diameter[0]}\n_PRINT_START_PHASE_PREHEAT\n_PRINT_START_PHASE_PROBING\n_PRINT_START_PHASE_EXTRUDER\n_PRINT_START_PHASE_PURGE",
+    "machine_end_gcode": "PRINT_END",
+    "before_layer_change_gcode": "BEFORE_LAYER_CHANGE HEIGHT=[layer_z] LAYER=[layer_num]",
+    "layer_change_gcode": "AFTER_LAYER_CHANGE",
+    "default_print_profile": "0.20mm Standard voron-printer",
+    "default_filament_profile": [
+        "Polymaker PolyLite PLA Pro"
+    ]
+}
