@@ -60,3 +60,7 @@ primary_branch = main
 is_system_service = False
 install_script = install.sh
 
+[spoolman]
+server = http://filament.home.arpa:7912
+sync_rate = 5
+
