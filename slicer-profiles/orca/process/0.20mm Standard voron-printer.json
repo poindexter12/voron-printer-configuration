@@ -1,0 +1,21 @@
+{
+    "type": "process",
+    "name": "0.20mm Standard voron-printer",
+    "inherits": "0.20mm Standard @Voron",
+    "from": "User",
+    "is_custom_defined": "0",
+    "version": "2.4.2.0",
+    "print_settings_id": "0.20mm Standard voron-printer",
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.25",
+    "initial_layer_speed": "30",
+    "initial_layer_infill_speed": "30",
+    "skirt_loops": "1",
+    "skirt_height": "1",
+    "skirt_distance": "2",
+    "enable_prime_tower": "0",
+    "compatible_printers": [
+        "Voron 2.4 350 voron-printer",
+        "Voron 2.4 350 0.4 nozzle"
+    ]
+}
