@@ -1,10 +1,19 @@
-# add under scrape_configs: on the observability host, then reload prometheus
+# Add under scrape_configs: on the observability host, then reload prometheus.
+# The exporter is blackbox-style: the TARGET is moonraker's address; relabeling
+# routes the actual scrape through the exporter on :9101.
 - job_name: klipper
   scrape_interval: 15s
+  metrics_path: /probe
   static_configs:
-    - targets: ['voron-printer.home.arpa:9101']
+    - targets: ['voron-printer.home.arpa:7125']
       labels:
         printer: voron-2.4-350
-  # exporter modules are selected via URL params per target:
   params:
-    modules: [process_stats, system_info, network_stats, printer_objects, history, spoolman]
+    modules: ["process_stats", "system_info", "network_stats", "printer_objects", "history", "spoolman"]
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: voron-printer.home.arpa:9101
