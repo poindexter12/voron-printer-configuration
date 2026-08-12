@@ -1,0 +1,10 @@
+# add under scrape_configs: on the observability host, then reload prometheus
+- job_name: klipper
+  scrape_interval: 15s
+  static_configs:
+    - targets: ['voron-printer.home.arpa:9101']
+      labels:
+        printer: voron-2.4-350
+  # exporter modules are selected via URL params per target:
+  params:
+    modules: [process_stats, system_info, network_stats, printer_objects, history, spoolman]
