@@ -24,6 +24,22 @@ squish (0.340 incident) — never calibrate Z from them.
    then flow (EM ladder), then PA (`PA_PATTERN` — PA shifts with nozzle dia).
 4. Verification print (benchy-shifted or one small functional part).
 
+## New print head / toolhead (more than a nozzle)
+
+Everything in "New nozzle" PLUS, in this order (before filament tuning):
+
+0. ⚠ Hardware trust first: wiggle-test the toolhead harness under the CAN
+   monitor; `STEPPER_BUZZ STEPPER=extruder` (listen for phase trouble).
+1. `PID_CALIBRATE HEATER=extruder TARGET=215` — new heater/thermistor.
+2. rotation_distance: mark + extrude 100mm, measure (target 100±2mm).
+3. Probe X/Y offset if the probe moved; then z_offset via pad ladder.
+4. `SHAPER_CALIBRATE` — new mass, new resonances.
+5. Then run the full "New filament" playbook for whatever is loaded
+   (flow step is mandatory: new hotend affects flow even for a known spool).
+
+Ordering rule: heat control -> extrusion accuracy -> Z -> resonance ->
+only then pattern-based tuning; earlier errors make later patterns lie.
+
 ## New filament (brand / type / color change within brand)
 
 1. **Dry first** (PolyDryer): PLA level 1, PETG level 2; expect 15–30% RH
