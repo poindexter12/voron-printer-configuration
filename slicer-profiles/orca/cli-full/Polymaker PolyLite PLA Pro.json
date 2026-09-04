@@ -14,19 +14,19 @@
         "70"
     ],
     "cool_plate_temp": [
-        "60"
+        "65"
     ],
     "cool_plate_temp_initial_layer": [
-        "60"
+        "65"
     ],
     "during_print_exhaust_fan_speed": [
         "70"
     ],
     "eng_plate_temp": [
-        "60"
+        "65"
     ],
     "eng_plate_temp_initial_layer": [
-        "60"
+        "65"
     ],
     "fan_cooling_layer_time": [
         "100"
@@ -128,10 +128,10 @@
         "100%"
     ],
     "hot_plate_temp": [
-        "60"
+        "65"
     ],
     "hot_plate_temp_initial_layer": [
-        "60"
+        "65"
     ],
     "nozzle_temperature": [
         "210"
@@ -152,10 +152,10 @@
         "3"
     ],
     "supertack_plate_temp": [
-        "60"
+        "65"
     ],
     "supertack_plate_temp_initial_layer": [
-        "60"
+        "65"
     ],
     "slow_down_for_layer_cooling": [
         "1"
@@ -170,10 +170,10 @@
         "45"
     ],
     "textured_plate_temp": [
-        "60"
+        "65"
     ],
     "textured_plate_temp_initial_layer": [
-        "60"
+        "65"
     ],
     "filament_start_gcode": [
         "; Filament gcode\n"
@@ -195,7 +195,7 @@
         "1"
     ],
     "pressure_advance": [
-        "0.049"
+        "0.035"
     ],
     "from": "User",
     "is_custom_defined": "0",

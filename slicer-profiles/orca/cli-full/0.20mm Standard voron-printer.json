@@ -117,5 +117,6 @@
     "from": "User",
     "is_custom_defined": "0",
     "version": "2.4.2.0",
-    "inherits": "0.20mm Standard @Voron"
+    "inherits": "0.20mm Standard @Voron",
+    "brim_type": "outer_only"
 }
