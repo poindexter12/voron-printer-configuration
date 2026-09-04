@@ -15,13 +15,12 @@ This repository contains the configuration for my Voron 2.4 350mm printer
 - **`database/`** - Moonraker database from the printer
   - Contains print history, settings, and other operational data
 
-- **`simulator/`** - Docker compose setup for testing configurations locally
 
 ## Development Workflow
 
 1. **Local Development** - Edit macros and configs in the `config/` folder
 2. **Testing** - Use the testing framework to validate G-code generation
-3. **Deployment** - Copy changes to the printer (or use git pull on the printer)
+3. **Deployment** - git pull on the printer (~/printer_data is the repo checkout)
 4. **Backup** - Printer automatically backs up to this repository
 5. **Validation** - Test actual prints to ensure changes work as expected
 
