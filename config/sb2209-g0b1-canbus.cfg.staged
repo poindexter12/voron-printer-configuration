@@ -1,0 +1,69 @@
+# STAGED 2026-09-08 for the SB2209 CAN V1.0 **STM32G0B1** board swap (arrives today).
+# NOT active yet: filename ends .staged so no [include] picks it up. Cutover steps
+# in docs/SB2209-G0B1-SWAP.md. Pins remapped from the RP2040 board per BTT's own
+# sample-bigtreetech-ebb-sb-canbus-v1.0.cfg; all CALIBRATED values carried over
+# verbatim from rp2040-canbus.cfg (PA, rotation_distance, PID, TMC currents).
+#
+# Firmware build (STM32G0B1): 8 MHz crystal, 8KiB bootloader (katapult),
+# communication = CAN bus on PB0/PB1, CANBUS_FREQUENCY per the bus (see swap doc).
+
+[mcu EBBCan]
+canbus_uuid: REPLACE_AFTER_QUERY   # new board = new uuid: flashtool.py -i can0 -q
+
+[temperature_sensor EBB_NTC]
+sensor_type: Generic 3950
+sensor_pin: EBBCan:PA2
+
+[adxl345]
+cs_pin: EBBCan:PB12
+spi_bus: spi2_PB2_PB11_PB10        # G0B1 uses HARDWARE SPI (RP2040 used software SPI pins)
+axes_map: z,-y,x
+
+[resonance_tester]
+probe_points: 100, 100, 20
+accel_chip: adxl345
+
+[extruder]
+pressure_advance: 0.035          # CALIBRATED 2026-08-09: Ellis pattern, PolyLite PLA Pro @ 215C, bands 6-8 clean
+step_pin: EBBCan:PD0
+dir_pin: !EBBCan:PD1             # BTT sample inverts dir vs RP2040 board — VERIFY extrude direction on first load
+enable_pin: !EBBCan:PD2
+microsteps: 16
+rotation_distance: 4.61863
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: EBBCan:PB13
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: EBBCan:PA3
+control: pid
+pid_Kp: 34.757                   # keep calibrated values; re-run PID_CALIBRATE if heater response differs
+pid_Ki: 4.456
+pid_Kd: 67.776
+min_temp: 0
+max_temp: 270
+max_extrude_only_distance: 120.0
+max_extrude_cross_section: 2.0
+max_extrude_only_velocity: 60
+max_extrude_only_accel: 5000
+
+[tmc2209 extruder]
+uart_pin: EBBCan:PA15
+run_current: 0.65
+hold_current: 0.45
+stealthchop_threshold: 0
+interpolate: True
+sense_resistor: 0.110            # VERIFY: G0B1 SB2209 may use 0.100Ω — check board docs before trusting current
+
+[fan]
+pin: EBBCan:PA1
+
+[heater_fan hotend_fan]
+pin: EBBCan:PA0
+heater: extruder
+heater_temp: 50.0
+
+[neopixel hotend_rgb]
+pin: EBBCan:PD3
+chain_count: 3
+# Re-enabled on the G0B1: neopixel was disabled on the RP2040 only as a can2040
+# IRQ-contention mitigation. Hardware CAN doesn't share that failure mode.

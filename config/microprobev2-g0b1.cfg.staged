@@ -1,0 +1,69 @@
+# STAGED 2026-09-08 for the SB2209 G0B1 swap — probe pins remapped for the new board.
+# NOT active (.staged). Identical logic to microprobev2.cfg; ONLY the two EBB pin
+# names change. ⚠️ THESE TWO PINS ARE THE ONE CRASH RISK — verify before homing.
+#
+# MicroProbe = deploy/stow control pin + signal pin, wired like a BLTouch. BTT's
+# G0B1 sample uses the BLTouch port as control=PB9, sensor=^PB8. Mapping below
+# uses that. VERIFY with the motion-free check in docs/SB2209-G0B1-SWAP.md
+# (QUERY_PROBE + hand-trigger) BEFORE any G28 — a wrong signal pin = crash into bed.
+
+[output_pin probe_enable]
+pin: EBBCan:PB9                  # was RP2040 gpio22 (deploy/stow control)
+value: 0
+
+[gcode_macro _probe_deploy]
+gcode:
+    SET_PIN PIN=probe_enable VALUE=1
+
+[gcode_macro _probe_stow]
+gcode:
+    SET_PIN PIN=probe_enable VALUE=0
+
+[probe]
+pin: ^!EBBCan:PB8                # was RP2040 gpio24 (signal). Keep ^! polarity (MicroProbe V2)
+deactivate_on_each_sample: false
+x_offset: 0.0
+y_offset: 18.82
+z_offset: 0.240                  # ⚠️ STALE: probe mount was physically adjusted 09-07 — full Z recal owed after swap
+speed: 5
+sample_retract_dist: 3
+lift_speed: 5
+samples: 8
+samples_result: median
+samples_tolerance: 0.010
+samples_tolerance_retries: 5
+activate_gcode:
+    _probe_deploy
+    M400
+    G4 P500
+deactivate_gcode:
+    _probe_stow
+
+[bed_mesh]
+speed: 100
+probe_count: 9, 9
+algorithm: bicubic
+mesh_min: 20,20
+mesh_max: 330,330
+fade_start: 1.0
+fade_end: 10.0
+
+[gcode_macro PROBE_PRELOAD]
+description: Preload Z mechanics with two dummy taps at center
+gcode:
+    G90
+    {% set px = printer.toolhead.axis_maximum.x / 2 %}
+    {% set py = printer.toolhead.axis_maximum.y / 2 %}
+    G1 X{px} Y{py} F6000
+    G1 Z10
+    PROBE
+    G1 Z10
+    PROBE
+    G1 Z10
+
+[gcode_macro QGL_WITH_RELOAD]
+description: Quick Gcode Load with reload of config
+gcode:
+    M106 S0
+    PROBE_PRELOAD
+    QUAD_GANTRY_LEVEL
