@@ -13,6 +13,7 @@
 !/slicer-profiles/
 !/models/
 !/observability/
+!/powerpi/
 !/*.md
 
 # Ignore all .env files anywhere in the tree

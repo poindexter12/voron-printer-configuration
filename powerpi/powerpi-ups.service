@@ -1,0 +1,13 @@
+[Unit]
+Description=PowerPi R3.1 UPS watcher (input-loss shutdown + telemetry)
+After=multi-user.target
+
+[Service]
+Type=simple
+User=poindexter12
+ExecStart=/usr/bin/python3 /home/poindexter12/powerpi/ups_watcher.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
