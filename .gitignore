@@ -5,6 +5,7 @@
 
 # Except these
 !/.gitignore
+!/.claude/
 !/.github/
 !/ruff.toml
 !/config/
@@ -17,6 +18,10 @@
 !/observability/
 !/powerpi/
 !/*.md
+
+# Machine-local Claude settings: absolute hook paths and personal permission
+# allowlists. Shared project config belongs in .claude/settings.json.
+.claude/settings.local.json
 
 # Ignore all .env files anywhere in the tree
 **/.env
