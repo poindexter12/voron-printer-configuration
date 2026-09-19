@@ -1,0 +1,20 @@
+[Unit]
+Description=Decoded CAN error frames from the printer CAN HAT
+After=systemd-networkd.service
+
+[Service]
+Type=simple
+User=poindexter12
+ExecStart=/usr/bin/stdbuf -oL /usr/bin/candump -t A -e -x -D can0,0~0,#FFFFFFFF
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=can-error-capture
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

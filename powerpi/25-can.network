@@ -2,8 +2,9 @@
 Name=can*
 
 [CAN]
-BitRate=500K
+BitRate=1M
 RestartSec=100ms
+BusErrorReporting=yes
 
 [Link]
 RequiredForOnline=no
