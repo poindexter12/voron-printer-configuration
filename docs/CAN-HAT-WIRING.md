@@ -90,7 +90,12 @@ Use the Octopus **TFT port** (USART1: TX=PA9, RX=PA10). Three wires, crossed:
 
 ### 4. Pi power: hardwired 5V into GPIO
 
-From the **replacement** 24V→5V converter (old one is a suspect — retire it):
+> **As-built correction 2026-09-15:** the installed 5V source is a **Mean Well
+> RS-25-5** on its own AC input, not a 24V→5V converter. Its 5V- was bonded to
+> the PSU 24V- with a wire at install; that bond and its removal are covered in
+> [GROUNDING.md](GROUNDING.md) Finding 3. Terminal wiring below is unchanged.
+
+From the **replacement** 5V supply (old converter is a suspect — retire it):
 
 | Converter | GPIO header |
 |---|---|

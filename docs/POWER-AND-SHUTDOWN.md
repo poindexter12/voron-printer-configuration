@@ -65,8 +65,12 @@ surprises, AND the mystery upstream blips (e.g. the silent Pi reboot
 
 ### Wiring (at install — stacked, simpler)
 
+> **As-built correction 2026-09-15:** the 5V source is a Mean Well **RS-25-5**
+> (own AC input), not a 24V→5V converter — read "converter OUT" below as the
+> RS-25-5 output. Grounding topology: [GROUNDING.md](GROUNDING.md).
+
 ```
-24V→5V converter OUT ──► PowerPi INPUT (+/-)     (5V is in the 3.9-14V window)
+RS-25-5 5V OUT ──────► PowerPi INPUT (+/-)       (5V is in the 3.9-14V window)
 PowerPi ──► Pi 5V via the stacked header          (remove the direct GPIO-pin feed)
 converter OUT (+) ──10kΩ──┬──► GPIO17 (pin 11)  "input present" sense
                           └──20kΩ──► GND         (5V → ~3.3V divider)
