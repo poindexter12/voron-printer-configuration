@@ -47,7 +47,7 @@ def recover_printer():
 
 def shutdown(ppi, reason):
     log.warning("SHUTDOWN: %s", reason)
-    wall("PowerPi UPS: %s - shutting down now" % reason)
+    wall(f"PowerPi UPS: {reason} - shutting down now")
     try:
         ppi.bat_disconnect()
     except Exception:
@@ -84,20 +84,20 @@ def main():
                 on_battery_since = time.monotonic()
                 log.warning("INPUT LOST - on battery (%s%%, %.2fV). Shutdown in %ds unless power returns.",
                             pct, vbat, GRACE_SECONDS)
-                wall("PowerPi UPS: input power lost, battery %s%% - shutdown in %ds unless restored"
-                     % (pct, GRACE_SECONDS))
+                wall(f"PowerPi UPS: input power lost, battery {pct}% "
+                     f"- shutdown in {GRACE_SECONDS}s unless restored")
             elif on_input and on_battery_since is not None:
                 outage = time.monotonic() - on_battery_since
                 on_battery_since = None
                 log.warning("INPUT RESTORED after %.0fs outage (battery %s%%)", outage, pct)
-                wall("PowerPi UPS: power restored after %.0fs (battery %s%%)" % (outage, pct))
+                wall(f"PowerPi UPS: power restored after {outage:.0f}s (battery {pct}%)")
                 recover_printer()
 
             if vbat < ppi.VBAT_LOW:
-                shutdown(ppi, "battery critically low (%.2fV)" % vbat)
+                shutdown(ppi, f"battery critically low ({vbat:.2f}V)")
                 return
             if on_battery_since is not None and time.monotonic() - on_battery_since >= GRACE_SECONDS:
-                shutdown(ppi, "input lost for %ds (battery %s%%)" % (GRACE_SECONDS, pct))
+                shutdown(ppi, f"input lost for {GRACE_SECONDS}s (battery {pct}%)")
                 return
 
             ticks += 1

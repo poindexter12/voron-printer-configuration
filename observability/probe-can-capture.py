@@ -4,11 +4,11 @@
 import argparse
 import datetime
 import json
-from pathlib import Path
 import signal
 import subprocess
 import time
 import urllib.request
+from pathlib import Path
 
 OBJECTS = {
     "webhooks": None,

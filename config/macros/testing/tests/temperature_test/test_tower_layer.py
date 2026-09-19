@@ -5,7 +5,7 @@ temperature changes at section boundaries (layers 57, 107, 157, 207).
 """
 
 import pytest
-from utils.gcode_helpers import render_macro_gcode, clean_gcode_string
+from utils.gcode_helpers import clean_gcode_string, render_macro_gcode
 
 # Path to the actual macro file (relative to testing directory)
 MACRO_FILE = '../temperature_test/tower_layer.cfg'

@@ -1,0 +1,26 @@
+# Lint settings for the Python in this repo: the macro test harness
+# (config/macros/testing), the UPS watcher (powerpi), and the CAN capture
+# tooling (observability).
+
+line-length = 120
+target-version = "py39"
+
+exclude = [
+    ".venv",
+    "config/klipper-macros",
+    "backup",
+]
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "B",    # bugbear
+    "SIM",  # simplify
+    "UP",   # pyupgrade
+]
+
+[lint.per-file-ignores]
+# Test modules import fixtures for their side effects and shadow names freely.
+"config/macros/testing/tests/**" = ["E402"]

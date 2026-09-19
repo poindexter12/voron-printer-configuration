@@ -6,20 +6,18 @@ run_macro_comparison_test method as individual tests.
 """
 
 import pytest
-from utils.gcode_helpers import run_macro_comparison_test
+from tests.retraction_calibration.test_fill import MACRO_FILE as FILL_MACRO_FILE
+from tests.retraction_calibration.test_fill import MACRO_NAME as FILL_MACRO_NAME
 
 # Import test data and macro info from individual test files
-from tests.retraction_calibration.test_fill import (
-    fill_test_data, MACRO_FILE as FILL_MACRO_FILE, MACRO_NAME as FILL_MACRO_NAME
-)
-from tests.retraction_calibration.test_perimeter import (
-    first_layer_test_data as perimeter_test_data,
-    MACRO_FILE as PERIMETER_MACRO_FILE, MACRO_NAME as PERIMETER_MACRO_NAME
-)
-from tests.retraction_calibration.test_retract_unretract import (
-    retract_unretract_test_data as retract_test_data,
-    MACRO_FILE as RETRACT_MACRO_FILE, MACRO_NAME as RETRACT_MACRO_NAME
-)
+from tests.retraction_calibration.test_fill import fill_test_data
+from tests.retraction_calibration.test_perimeter import MACRO_FILE as PERIMETER_MACRO_FILE
+from tests.retraction_calibration.test_perimeter import MACRO_NAME as PERIMETER_MACRO_NAME
+from tests.retraction_calibration.test_perimeter import first_layer_test_data as perimeter_test_data
+from tests.retraction_calibration.test_retract_unretract import MACRO_FILE as RETRACT_MACRO_FILE
+from tests.retraction_calibration.test_retract_unretract import MACRO_NAME as RETRACT_MACRO_NAME
+from tests.retraction_calibration.test_retract_unretract import retract_unretract_test_data as retract_test_data
+from utils.gcode_helpers import run_macro_comparison_test
 
 
 @pytest.mark.retraction_calibration

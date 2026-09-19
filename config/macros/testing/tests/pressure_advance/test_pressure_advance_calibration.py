@@ -13,7 +13,6 @@ printed result has been validated on the machine.
 import re
 
 import pytest
-
 from utils.gcode_helpers import extract_macro_gcode, render_macro_gcode
 
 MACRO_FILE = '../pressure_advance/pressure_advance_calibration.cfg'
@@ -75,7 +74,8 @@ def test_public_macro_calls_the_generator_that_exists():
     Regression guard: it previously called _PRESSURE_ADVANCE_CALIBRATION,
     which is not defined anywhere, so the command failed at runtime.
     """
-    source = open(MACRO_FILE, encoding='utf-8').read()
+    with open(MACRO_FILE, encoding='utf-8') as handle:
+        source = handle.read()
     defined = set(re.findall(r'\[gcode_macro ([^\]]+)\]', source))
 
     body = extract_macro_gcode(MACRO_FILE, PUBLIC_MACRO)

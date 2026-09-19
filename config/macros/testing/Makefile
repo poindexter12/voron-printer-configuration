@@ -9,7 +9,7 @@ PYTEST_OPTS := -v
 
 .PHONY: help venv install test test-fast test-all test-mcu clean
 .PHONY: test-glyphs test-perimeter test-fill test-retract test-outer-loop test-combined
-.PHONY: test-retraction-calibration test-temperature-tower test-file test-match markers
+.PHONY: test-retraction-calibration test-temperature-test test-file test-match markers
 
 .DEFAULT_GOAL := help
 
@@ -94,9 +94,9 @@ test-retraction-calibration: ## All retraction calibration tests
 	@echo "Running all retraction calibration tests..."
 	. $(VENV)/bin/activate && $(PYTEST) tests/retraction_calibration/ $(PYTEST_OPTS)
 
-test-temperature-tower: ## All temperature tower tests
+test-temperature-test: ## All temperature tower tests
 	@echo "Running all temperature tower tests..."
-	. $(VENV)/bin/activate && $(PYTEST) tests/temperature_tower/ $(PYTEST_OPTS)
+	. $(VENV)/bin/activate && $(PYTEST) tests/temperature_test/ $(PYTEST_OPTS)
 
 # ============================================================================
 # Development Helpers

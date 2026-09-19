@@ -4,9 +4,9 @@ These tests validate the temperature tower macro produces expected output
 and contains the correct temperature change commands.
 """
 
+
 import pytest
-import re
-from utils.gcode_helpers import render_macro_gcode, clean_gcode_string
+from utils.gcode_helpers import clean_gcode_string, render_macro_gcode
 
 # Path to the actual macro file (relative to testing directory)
 MACRO_FILE = '../temperature_test/temperature_tower.cfg'

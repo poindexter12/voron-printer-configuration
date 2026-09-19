@@ -1,6 +1,8 @@
-import smbus
 import logging
 import time
+
+import smbus
+
 
 class Powerpi:
     
@@ -197,10 +199,10 @@ class Powerpi:
         return 0, data
 
     def bat_disconnect(self):
-        for i in (0,3):
+        for _attempt in (0, 3):
             try:
                 self.bus.write_byte_data(self.ADDRESS, self.REG_BATFET_DIS, self.BYTE_BATFET_DIS)
                 return 0
-            except:
+            except Exception:
                 time.sleep(1)
         return 1
