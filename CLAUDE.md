@@ -26,7 +26,10 @@ python -m pytest tests/retraction_calibration/test_outer_loop.py -v  # Single fi
 python -m pytest -m "glyphs" -v  # By marker
 ```
 
-Available markers: `retraction`, `retraction_calibration`, `perimeter`, `retract_unretract`, `outer_loop`, `glyphs`, `fill`
+Available markers (authoritative list is `config/macros/testing/pytest.ini`):
+`retraction`, `retraction_calibration`, `perimeter`, `retract_unretract`,
+`outer_loop`, `glyphs`, `fill`, `layers`, `combined`, `mcu`, `slow`,
+`integration`, `temperature_tower`, `stringing`, `pressure_advance`
 
 ### Linting
 
@@ -57,7 +60,10 @@ config/macros/testing/
 
 ### Macro-Test Relationship
 
-Macros and tests use parallel folder structures:
+Macros and tests use parallel folder structures. The `[feature_name]` segment
+must match exactly across all three — a test directory named for the macro
+rather than its folder is a bug, not a style choice.
+
 - Macro: `config/macros/[feature_name]/[component].cfg`
 - Test: `config/macros/testing/tests/[feature_name]/test_[component].py`
 - Expected output: `config/macros/testing/fixtures/expected_gcode/[feature_name]/[component].gcode`

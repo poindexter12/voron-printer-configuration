@@ -133,3 +133,57 @@ def test_tower_layer_ends_with_retraction():
     assert last_line is not None, "No content in rendered output"
     assert 'E-' in last_line or 'retraction' in last_line.lower(), \
         f"Expected retraction at end, got: {last_line}"
+
+
+# ---------------------------------------------------------------------------
+# Parameterised section arithmetic.
+#
+# The tests above pin one fixed parameter set, which a macro emitting literal
+# temperatures would also satisfy. These vary the base temperature and the
+# offsets so the section temperatures have to be computed, not hardcoded.
+# ---------------------------------------------------------------------------
+
+SECTION_OFFSET_KEYS = ['OFFSET_2', 'OFFSET_3', 'OFFSET_4', 'OFFSET_5']
+
+
+def tower_layer_params_for(hotend, offsets):
+    """Build a TOWER_LAYER parameter set for a base temp and four offsets."""
+    params = dict(tower_layer_params)
+    params['HOTEND_TEMPERATURE'] = hotend
+    params.update(dict(zip(SECTION_OFFSET_KEYS, offsets)))
+    return params
+
+
+@pytest.mark.temperature_tower
+@pytest.mark.parametrize('hotend,offsets', [
+    (215, [-5, -10, -15, -20]),     # the standard descending ladder
+    (250, [-10, -20, -30, -40]),    # ABS range, wider steps
+    (200, [5, 10, 15, 20]),         # ascending, for a filament tested upward
+    (230, [0, -5, -5, -10]),        # repeated offsets must still resolve
+])
+def test_tower_layer_section_temps_are_computed(hotend, offsets):
+    """Section B-E temperatures are base + the corresponding offset."""
+    rendered = render_macro_gcode(
+        MACRO_FILE, MACRO_NAME, tower_layer_params_for(hotend, offsets))
+
+    assert f'M109 S{hotend}' in rendered, \
+        f"Section A should wait at the base temperature {hotend}"
+
+    for index, offset in enumerate(offsets):
+        expected = hotend + offset
+        section = 'BCDE'[index]
+        assert f'M104 S{expected}' in rendered, \
+            f"Section {section}: expected M104 S{expected} " \
+            f"(base {hotend} + offset {offset})"
+
+
+@pytest.mark.temperature_tower
+def test_tower_layer_section_boundaries_are_stable():
+    """Section changes happen at the documented layer numbers.
+
+    These boundaries are what makes a printed tower readable - a band that
+    starts at the wrong layer silently mislabels every result above it.
+    """
+    rendered = render_macro_gcode(MACRO_FILE, MACRO_NAME, tower_layer_params)
+    for layer in (57, 107, 157, 207):
+        assert f';layer {layer}' in rendered, f"Missing section boundary at layer {layer}"

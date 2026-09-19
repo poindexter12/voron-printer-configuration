@@ -112,3 +112,66 @@ def test_temperature_tower_ends_correctly():
 
     # Should turn off hotend at end
     assert 'M104 S0' in rendered, "Missing hotend off command M104 S0"
+
+
+# ---------------------------------------------------------------------------
+# Parameterised setup arithmetic, for the same reason as in test_tower_layer:
+# fixed-parameter assertions cannot distinguish computed values from literals.
+# ---------------------------------------------------------------------------
+
+STARTING_TEMP_DROP = 50  # the macro preheats this far below the target
+
+
+def temperature_tower_params_for(hotend, bed):
+    """Build a TEMPERATURE_TOWER parameter set for a given hotend/bed pair."""
+    params = dict(temperature_tower_params)
+    params['HOTEND_TEMPERATURE'] = hotend
+    params['BED_TEMPERATURE'] = bed
+    return params
+
+
+@pytest.mark.temperature_tower
+@pytest.mark.parametrize('hotend,bed', [
+    (215, 75),    # PLA-ish, the existing fixture values
+    (250, 100),   # ABS
+    (230, 60),    # PETG
+])
+def test_temperature_tower_temps_are_computed(hotend, bed):
+    """Bed and starting temperatures follow the parameters, not literals."""
+    rendered = render_macro_gcode(
+        MACRO_FILE, MACRO_NAME, temperature_tower_params_for(hotend, bed))
+
+    assert f'M140 S{bed}' in rendered, f"Missing bed set M140 S{bed}"
+    assert f'M190 S{bed}' in rendered, f"Missing bed wait M190 S{bed}"
+
+    starting = hotend - STARTING_TEMP_DROP
+    assert f'M104 S{starting}' in rendered, \
+        f"Expected preheat to M104 S{starting} ({hotend} - {STARTING_TEMP_DROP})"
+
+
+@pytest.mark.temperature_tower
+@pytest.mark.parametrize('offset_1,expected_base', [
+    (0, 215),
+    (-5, 210),
+    (5, 220),
+])
+def test_temperature_tower_base_layer_applies_offset_1(offset_1, expected_base):
+    """The base layer temperature is HOTEND_TEMPERATURE + OFFSET_1."""
+    params = dict(temperature_tower_params)
+    params['OFFSET_1'] = offset_1
+    rendered = render_macro_gcode(MACRO_FILE, MACRO_NAME, params)
+
+    assert f'M109 S{expected_base}' in rendered, \
+        f"Base layer should wait at {expected_base} (215 + {offset_1})"
+
+
+@pytest.mark.temperature_tower
+def test_temperature_tower_passes_offsets_through_to_tower_layer():
+    """Offsets reach TOWER_LAYER, which owns the section changes above layer 7."""
+    rendered = render_macro_gcode(
+        MACRO_FILE, MACRO_NAME, temperature_tower_params)
+
+    assert 'TOWER_LAYER' in rendered
+    for key in ['OFFSET_2', 'OFFSET_3', 'OFFSET_4', 'OFFSET_5']:
+        assert f'{key}=' in rendered, \
+            f"TOWER_LAYER call is missing {key}; section temps would fall back to defaults"
