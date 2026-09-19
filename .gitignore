@@ -5,6 +5,8 @@
 
 # Except these
 !/.gitignore
+!/.github/
+!/ruff.toml
 !/config/
 !/database/
 !/backup/

@@ -8,19 +8,15 @@ This validates that the macro produces equivalent printer behavior
 to the original handcrafted G-code.
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 mcu_compare = pytest.importorskip(
     "utils.mcu_compare",
     reason="utils/mcu_compare.py was never committed; MCU batch-mode testing unavailable"
 )
-from utils.mcu_compare import (
-    check_docker_image,
-    run_gcode_batch,
-    compare_mcu_output,
-    BATCH_IMAGE
-)
+from utils.mcu_compare import BATCH_IMAGE, check_docker_image, compare_mcu_output, run_gcode_batch
 
 # Skip all tests if Docker image not available
 pytestmark = pytest.mark.skipif(
@@ -42,7 +38,7 @@ def load_original_gcode():
     """
     original_path = MACRO_DIR / "original.gcode"
 
-    with open(original_path, 'r') as f:
+    with open(original_path) as f:
         lines = f.readlines()
 
     cleaned_lines = []
@@ -111,7 +107,7 @@ gcode:
     for macro_file in macro_files:
         macro_path = MACRO_DIR / macro_file
         if macro_path.exists():
-            with open(macro_path, 'r') as f:
+            with open(macro_path) as f:
                 content = f.read()
                 # Filter out non-Klipper syntax:
                 # - include: directives

@@ -3,8 +3,8 @@
 import difflib
 import os
 import re
-from jinja2 import Environment
 
+from jinja2 import Environment
 
 # Klipper uses a custom Jinja2 environment with single braces for expressions
 # See: https://www.klipper3d.org/Command_Templates.html
@@ -32,7 +32,7 @@ def extract_macro_gcode(file_path, macro_name):
     Returns:
         String containing just the gcode section of the macro
     """
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, encoding='utf-8') as f:
         content = f.read()
 
     # Find the macro section
@@ -181,7 +181,7 @@ def clean_gcode_file(path, render_jinja=False, params=None):
     """
     if params is None:
         params = {}
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, encoding='utf-8') as f:
         content = f.read()
         if render_jinja:
             template = KLIPPER_ENV.from_string(content)
@@ -279,7 +279,9 @@ def run_gcode_comparison_test(results_dir, orig_file, render_file, params, test_
     # Count actual differences using unified diff (more reliable than parsing HTML)
     unified = list(difflib.unified_diff(orig_cleaned, render_cleaned, lineterm=''))
     # Count lines starting with + or - (excluding the +++ and --- header lines)
-    diff_count = sum(1 for line in unified if (line.startswith('+') or line.startswith('-')) and not line.startswith('+++') and not line.startswith('---'))
+    diff_count = sum(1 for line in unified
+                     if line.startswith(('+', '-'))
+                     and not line.startswith(('+++', '---')))
 
     # Save HTML diff for easier viewing
     html_diff_path = os.path.join(results_dir, f'{test_name}_diff.html')

@@ -13,7 +13,6 @@ import math
 import re
 
 import pytest
-
 from utils.gcode_helpers import render_macro_gcode, run_macro_comparison_test
 
 MACRO_FILE = '../stringing_test/stringing_test.cfg'

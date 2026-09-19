@@ -29,15 +29,37 @@ python -m pytest -m "glyphs" -v  # By marker
 Available markers (authoritative list is `config/macros/testing/pytest.ini`):
 `retraction`, `retraction_calibration`, `perimeter`, `retract_unretract`,
 `outer_loop`, `glyphs`, `fill`, `layers`, `combined`, `mcu`, `slow`,
-`integration`, `temperature_tower`, `stringing`, `pressure_advance`
+`integration`, `temperature_tower`, `stringing`, `pressure_advance`, `config`
 
 ### Linting
 
+CI runs these on every push and pull request (`.github/workflows/ci.yml`), so
+run them before pushing. Settings live in `ruff.toml` at the repo root.
+
 ```bash
-trunk fmt <filename>
-trunk check --fix <filename>
-trunk check <filename>
+ruff check .                 # or: uvx ruff check .
+ruff check . --fix           # apply the safe fixes
+shellcheck backup/*.sh observability/*.sh
 ```
+
+`trunk fmt` / `trunk check` also work if you have trunk installed, but the repo
+carries no `.trunk` config and CI does not use it.
+
+### CI
+
+`.github/workflows/ci.yml` has three jobs: the macro test suite (`-m "not mcu"`),
+ruff, and shellcheck. Note `.gitignore` denies everything at the repo root by
+default — a new top-level file needs an explicit `!/name` exception or git will
+not see it.
+
+### Config structure checks
+
+`config/macros/testing/tests/test_config_structure.py` guards the wiring rather
+than the rendered G-code: every `[include]` in `printer.cfg` resolves, no
+Klipper section is declared in two files, every `macros/<feature>/` has a
+matching `tests/<feature>/`, and every marker used in a test is registered in
+`pytest.ini`. Add a genuinely external include to `EXTERNAL_INCLUDES` in that
+file rather than loosening the check.
 
 ## Architecture
 

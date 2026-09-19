@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# The hourly configuration_backup.sh pushes to main. Let a newer run cancel an
+# in-flight one for the same ref rather than queueing a backlog of duplicates.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Macro tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # printer.cfg includes klipper-macros/*.cfg, and the config structure
+          # checks verify that include resolves.
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: config/macros/testing/requirements.txt
+
+      - name: Install dependencies
+        working-directory: config/macros/testing
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        working-directory: config/macros/testing
+        # MCU tests need the Klipper batch-mode docker image, which CI does not
+        # build. They are skipped locally too; see issue for wiring them up.
+        run: python -m pytest tests/ -v -m "not mcu"
+
+  lint:
+    name: Python lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/ruff-action@v3
+        with:
+          args: check --output-format github
+
+  shell:
+    name: Shell lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck
+        run: shellcheck backup/*.sh observability/*.sh

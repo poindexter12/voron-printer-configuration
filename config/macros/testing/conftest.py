@@ -3,13 +3,14 @@
 import os
 import shutil
 from datetime import datetime
+
 import pytest
 
-
-# Read retain_count from environment (allow override). Default to 5.
+# Read RETAIN_COUNT from environment (allow override). Default to 5.
+# 'retain_count' is a legacy lowercase alias kept for existing shell aliases.
 try:
-    RETAIN_COUNT = int(os.environ.get('retain_count',
-                                     os.environ.get('RETAIN_COUNT', '5')))
+    RETAIN_COUNT = int(os.environ.get('RETAIN_COUNT',
+                                      os.environ.get('retain_count', '5')))  # noqa: SIM112
 except ValueError:
     RETAIN_COUNT = 5
 
