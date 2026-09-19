@@ -22,6 +22,12 @@
 # Ignore all log files
 **/*.log
 
+# Editor swap/backup files
+**/*.swp
+**/*.swo
+**/*~
+**/*.bkp
+
 # Python things
 **/venv/
 **/.venv/
