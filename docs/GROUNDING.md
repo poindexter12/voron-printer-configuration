@@ -201,6 +201,11 @@ the sole reference and must stay connected.
 
 Not implicated in the probe CAN errors - separate domain, separate fix.
 
+**Bond wire removed 2026-09-22.** Klipper reconnected to both MCUs (Octopus
+over UART, EBB over CAN), confirming the UART ground at Pi header pin 14 is
+intact and is now the sole reference. See PROBE-CAPACITOR.md for the capture
+taken the same session.
+
 ## Finding 4: what is actually correct
 
 Worth stating plainly, because most of this is right:

@@ -113,6 +113,52 @@ Compare RX error deltas against the +11/+22 baseline.
   split-supply test: bench 5V to the probe, grounded at the EBB only
   (see GROUNDING.md, "Do not" section for the grounding rule).
 
+## Result: CONFIRMED FIXED 2026-09-22
+
+Installed the 470uF/10V/105C part across P5 pin 2 (5V, red) and pin 1 (GND,
+brown). The 5V- to 24V- bond wire (GROUNDING.md Finding 3) was removed in the
+same session - separate domain, on the host side of the HAT isolation barrier,
+so not a confound for CAN.
+
+Parked capture, same position as the baseline (X177.5 Y177.5 Z106, motors
+disabled, heaters off):
+
+| capture                 | before | deployed | stowed | delta |
+|-------------------------|--------|----------|--------|-------|
+| baseline 2026-09-13     |    197 |      208 |    230 |  +33  |
+| 2026-09-22, 470uF       |      0 |        0 |      0 |  **+0** |
+
+- `probe_enable` went 0.0 -> 1.0 -> 0.0 across the snapshots and 583 CAN
+  frames were captured, so the solenoid did actuate. This is not a silent
+  no-op.
+- Every 09-13 baseline run wrote a 762-byte `errors.log`. The 09-22 run wrote
+  **0 bytes**.
+- Artifact: `~/printer_data/logs/can-probe-20260922-210006.json`
+
+Under load, same session:
+
+- **Cold QGL** - G28 plus 3 QGL passes over 4 points, ~13 probe actuations
+  with steppers energised. Converged 2.669 -> 0.0806 -> 0.006250mm against a
+  0.020 tolerance. Counters after: `rx_error=0 tx_error=0 tx_retries=0
+  bytes_retransmit=0 bytes_invalid=0`.
+- **Partial heat soak** - bed driven 26 -> 110C at full power with the hotend
+  at 250C. Counters never moved. The structured soak capture was abandoned
+  (see below), so this is an observation rather than a scripted artifact.
+
+Zero *retransmits* matters as much as zero errors: the link is not masking
+faults behind auto-retry, which was the original concern.
+
+**Attribution: the capacitor.** The bond wire was never on the CAN path.
+
+### Notes for the next person
+
+- `probe-can-capture.py` refuses to run with heaters on (`assert_safe` raises
+  "Heaters must be off"), so a soak capture has to be taken with the heaters
+  switched off and the hardware still hot, not mid-soak.
+- `M190` blocks Klipper's gcode queue. Killing the HTTP client does not stop
+  it, and a queued `M140 S0` will not execute until the wait completes. Plan
+  heat steps so you are not relying on cancelling one.
+
 ## Do not
 
 - **Do not power the probe from the Pi's 5V.** Its return current would run
