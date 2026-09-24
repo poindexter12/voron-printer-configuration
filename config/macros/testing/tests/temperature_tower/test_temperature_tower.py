@@ -9,7 +9,7 @@ import pytest
 from utils.gcode_helpers import clean_gcode_string, render_macro_gcode
 
 # Path to the actual macro file (relative to testing directory)
-MACRO_FILE = '../temperature_test/temperature_tower.cfg'
+MACRO_FILE = '../temperature_tower/temperature_tower.cfg'
 MACRO_NAME = 'TEMPERATURE_TOWER'
 
 # Parameters that match the original.old reference output

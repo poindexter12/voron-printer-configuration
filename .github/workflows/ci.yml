@@ -40,7 +40,7 @@ jobs:
         working-directory: config/macros/testing
         # MCU tests need the Klipper batch-mode docker image, which CI does not
         # build. They are skipped locally too; see issue for wiring them up.
-        run: python -m pytest tests/ -v -m "not mcu"
+        run: python -m pytest tests/ -v
 
   lint:
     name: Python lint

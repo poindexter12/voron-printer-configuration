@@ -29,7 +29,7 @@ python -m pytest tests/ -v
 ### Run by Feature Folder
 ```bash
 python -m pytest tests/retraction_calibration/ -v
-python -m pytest tests/temperature_test/ -v
+python -m pytest tests/temperature_tower/ -v
 ```
 
 ### Run Single Test File

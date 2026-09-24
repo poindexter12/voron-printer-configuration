@@ -8,7 +8,7 @@ import pytest
 from utils.gcode_helpers import clean_gcode_string, render_macro_gcode
 
 # Path to the actual macro file (relative to testing directory)
-MACRO_FILE = '../temperature_test/tower_layer.cfg'
+MACRO_FILE = '../temperature_tower/tower_layer.cfg'
 MACRO_NAME = 'TOWER_LAYER'
 
 # Standard parameters for testing
