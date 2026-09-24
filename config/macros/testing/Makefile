@@ -7,9 +7,9 @@ PYTHON := $(VENV)/bin/python
 PYTEST := $(VENV)/bin/pytest
 PYTEST_OPTS := -v
 
-.PHONY: help venv install test test-fast test-all test-mcu clean
+.PHONY: help venv install test test-fast test-all clean
 .PHONY: test-glyphs test-perimeter test-fill test-retract test-outer-loop test-combined
-.PHONY: test-retraction-calibration test-temperature-test test-file test-match markers
+.PHONY: test-retraction-calibration test-temperature-tower test-file test-match markers
 
 .DEFAULT_GOAL := help
 
@@ -44,19 +44,13 @@ clean: ## Remove venv and test results
 # Test Targets - All Tests
 # ============================================================================
 
-test: ## Run all fast tests (excludes slow MCU tests)
-	@echo "Running fast tests (excluding MCU tests)..."
-	. $(VENV)/bin/activate && $(PYTEST) tests/ $(PYTEST_OPTS) -m "not mcu"
+test: ## Run all tests
+	@echo "Running tests..."
+	. $(VENV)/bin/activate && $(PYTEST) tests/ $(PYTEST_OPTS)
 
 test-fast: test ## Alias for 'test'
 
-test-all: ## Run ALL tests including slow MCU tests
-	@echo "Running ALL tests (including slow MCU tests)..."
-	. $(VENV)/bin/activate && $(PYTEST) tests/ $(PYTEST_OPTS)
-
-test-mcu: ## Run only MCU-level integration tests (slow)
-	@echo "Running MCU-level integration tests (slow)..."
-	. $(VENV)/bin/activate && $(PYTEST) tests/ $(PYTEST_OPTS) -m "mcu"
+test-all: test ## Alias for 'test'
 
 # ============================================================================
 # Test Targets - By Component
@@ -94,9 +88,9 @@ test-retraction-calibration: ## All retraction calibration tests
 	@echo "Running all retraction calibration tests..."
 	. $(VENV)/bin/activate && $(PYTEST) tests/retraction_calibration/ $(PYTEST_OPTS)
 
-test-temperature-test: ## All temperature tower tests
+test-temperature-tower: ## All temperature tower tests
 	@echo "Running all temperature tower tests..."
-	. $(VENV)/bin/activate && $(PYTEST) tests/temperature_test/ $(PYTEST_OPTS)
+	. $(VENV)/bin/activate && $(PYTEST) tests/temperature_tower/ $(PYTEST_OPTS)
 
 # ============================================================================
 # Development Helpers

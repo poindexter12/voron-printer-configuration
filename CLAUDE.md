@@ -28,8 +28,8 @@ python -m pytest -m "glyphs" -v  # By marker
 
 Available markers (authoritative list is `config/macros/testing/pytest.ini`):
 `retraction`, `retraction_calibration`, `perimeter`, `retract_unretract`,
-`outer_loop`, `glyphs`, `fill`, `layers`, `combined`, `mcu`, `slow`,
-`integration`, `temperature_tower`, `stringing`, `pressure_advance`, `config`
+`outer_loop`, `glyphs`, `fill`, `layers`, `combined`, `temperature_tower`,
+`stringing`, `pressure_advance`, `config`
 
 ### Linting
 
@@ -47,7 +47,7 @@ carries no `.trunk` config and CI does not use it.
 
 ### CI
 
-`.github/workflows/ci.yml` has three jobs: the macro test suite (`-m "not mcu"`),
+`.github/workflows/ci.yml` has three jobs: the macro test suite,
 ruff, and shellcheck. Note `.gitignore` denies everything at the repo root by
 default — a new top-level file needs an explicit `!/name` exception or git will
 not see it.

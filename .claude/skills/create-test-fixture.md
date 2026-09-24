@@ -82,7 +82,7 @@ config/macros/testing/fixtures/expected_gcode/
 │   ├── perimeter.gcode
 │   ├── glyphs.gcode
 │   └── fill.gcode
-├── temperature_test/
+├── temperature_tower/
 │   ├── tower_layer.gcode
 │   └── temperature_tower.gcode
 └── calibration_tower/
