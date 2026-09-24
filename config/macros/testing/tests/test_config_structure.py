@@ -45,11 +45,50 @@ def include_targets(cfg_path):
     return re.findall(r'^\[include\s+(.+?)\]', text, re.MULTILINE)
 
 
+def normalized_section(header):
+    """The key Klipper effectively compares a section header on.
+
+    `[gcode_macro pause]` and `[gcode_macro PAUSE]` are two sections to
+    configparser but one command to Klipper, which upper-cases a macro's name
+    when it registers it. Comparing the headers as written misses the
+    collision entirely - that is how three real duplicates between
+    klipper-macros and mainsail.cfg went unreported (see #14).
+    """
+    return ' '.join(header.split()).lower()
+
+
+def is_include(header):
+    """True for an [include ...] header, whatever its casing."""
+    parts = header.split()
+    return bool(parts) and parts[0].lower() == 'include'
+
+
 def section_headers(cfg_path):
     """Yield every [section] header in a file, excluding includes."""
     text = cfg_path.read_text(encoding='utf-8')
     return [h.strip() for h in re.findall(r'^\[([^\]]+)\]', text, re.MULTILINE)
-            if not h.startswith('include')]
+            if not is_include(h.strip())]
+
+
+def duplicate_sections(cfg_files, relative_to):
+    """Map each section declared in >1 file to where it was declared.
+
+    Keyed on the normalized header so case and spacing differences still
+    collide, but reports the spelling each file actually uses - without that,
+    a report of `[gcode_macro pause]` twice looks like a bug in the test.
+    """
+    seen = {}
+    duplicates = {}
+    for cfg in cfg_files:
+        rel = str(cfg.relative_to(relative_to))
+        for header in section_headers(cfg):
+            key = normalized_section(header)
+            where = f"{rel} as [{header}]"
+            if key in seen and seen[key][0] != rel:
+                duplicates.setdefault(key, {seen[key][1]}).add(where)
+            else:
+                seen.setdefault(key, (rel, where))
+    return duplicates
 
 
 def local_config_files():
@@ -96,17 +135,9 @@ def test_external_includes_are_declared_not_missing():
 @pytest.mark.config
 def test_no_section_declared_in_two_files():
     """Klipper takes last-wins on a duplicated section, without warning."""
-    seen = {}
-    duplicates = {}
-    for cfg in local_config_files():
-        for header in section_headers(cfg):
-            rel = str(cfg.relative_to(CONFIG_ROOT))
-            if header in seen and seen[header] != rel:
-                duplicates.setdefault(header, {seen[header]}).add(rel)
-            else:
-                seen.setdefault(header, rel)
+    duplicates = duplicate_sections(local_config_files(), CONFIG_ROOT)
     assert not duplicates, "Sections declared in more than one file: " + ", ".join(
-        f"[{h}] in {sorted(files)}" for h, files in sorted(duplicates.items()))
+        f"[{key}] in {sorted(files)}" for key, files in sorted(duplicates.items()))
 
 
 @pytest.mark.config
@@ -145,3 +176,65 @@ def test_all_pytest_markers_are_registered():
     unregistered = used - registered
     assert not unregistered, \
         f"Markers used in tests but missing from pytest.ini: {sorted(unregistered)}"
+
+
+def write_cfgs(tmp_path, **files):
+    """Write {name: text} as .cfg files and return them in a stable order."""
+    for name, text in files.items():
+        (tmp_path / f'{name}.cfg').write_text(text, encoding='utf-8')
+    return sorted(tmp_path.glob('*.cfg'))
+
+
+@pytest.mark.config
+def test_duplicate_sections_catches_case_mismatch(tmp_path):
+    """The regression behind #14.
+
+    klipper-macros writes `[gcode_macro pause]`, mainsail.cfg writes
+    `[gcode_macro PAUSE]`. Klipper upper-cases both to one command; comparing
+    the headers as written treats them as unrelated and passes green.
+    """
+    cfgs = write_cfgs(tmp_path,
+                      a='[gcode_macro pause]\ngcode:\n    M117 a\n',
+                      b='[gcode_macro PAUSE]\ngcode:\n    M117 b\n')
+    duplicates = duplicate_sections(cfgs, tmp_path)
+    assert 'gcode_macro pause' in duplicates
+
+
+@pytest.mark.config
+def test_duplicate_sections_reports_the_spelling_each_file_uses(tmp_path):
+    """A report showing the same header twice reads as a bug in the test."""
+    cfgs = write_cfgs(tmp_path,
+                      a='[gcode_macro pause]\n',
+                      b='[gcode_macro PAUSE]\n')
+    where = duplicate_sections(cfgs, tmp_path)['gcode_macro pause']
+    assert where == {'a.cfg as [gcode_macro pause]', 'b.cfg as [gcode_macro PAUSE]'}
+
+
+@pytest.mark.config
+def test_duplicate_sections_collides_on_spacing_too(tmp_path):
+    """`config.get_name().split()` makes inner spacing irrelevant to Klipper."""
+    cfgs = write_cfgs(tmp_path,
+                      a='[gcode_macro  PAUSE]\n',
+                      b='[gcode_macro PAUSE]\n')
+    assert 'gcode_macro pause' in duplicate_sections(cfgs, tmp_path)
+
+
+@pytest.mark.config
+def test_duplicate_sections_ignores_includes_whatever_the_casing(tmp_path):
+    """An [Include] is a directive, not a section that can collide.
+
+    Matching the prefix case-sensitively made a capitalised include look like
+    an ordinary section, so two files including the same file were reported as
+    a duplicate declaration - a false failure with nothing to fix.
+    """
+    cfgs = write_cfgs(tmp_path,
+                      a='[Include shared.cfg]\n[respond]\n',
+                      b='[Include shared.cfg]\n')
+    assert duplicate_sections(cfgs, tmp_path) == {}
+
+
+@pytest.mark.config
+def test_duplicate_sections_ignores_a_repeat_inside_one_file(tmp_path):
+    """Only cross-file collisions are in scope; one file is the author's business."""
+    cfgs = write_cfgs(tmp_path, a='[respond]\n[respond]\n')
+    assert duplicate_sections(cfgs, tmp_path) == {}

@@ -10,6 +10,14 @@
 !/ruff.toml
 !/config/
 !/database/
+
+# Moonraker's SQLite store rewrites its bytes on nearly every operation, so
+# tracking it produced a commit an hour with no content change - 285 of the
+# first 422 commits, 66MB of blobs. That churn diverged the Pi from origin and
+# silently blocked backup pushes for two weeks (2026-09-08 to 2026-09-22).
+# It holds print history and Spoolman links, not printer configuration, so
+# losing it on a rebuild costs convenience rather than a working machine.
+database/moonraker-sql.db
 !/backup/
 !/docs/
 !/ssh/
@@ -28,6 +36,11 @@
 
 # Ignore all log files
 **/*.log
+
+# Runtime state written by configuration_backup.sh when a push is rejected.
+# backup/ is whitelisted above, so without this the failure sentinel would
+# itself be committed - and become a new source of the churn it reports on.
+backup/.push-failed
 
 # Editor swap/backup files
 **/*.swp
