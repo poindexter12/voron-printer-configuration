@@ -199,7 +199,10 @@ class Powerpi:
         return 0, data
 
     def bat_disconnect(self):
-        for _attempt in (0, 3):
+        # (0, 3) is a 2-tuple, not a range, so this made two attempts rather
+        # than three. The I2C write cuts the battery FET during an orderly
+        # shutdown, so a transient failure costs a real chance to disconnect.
+        for _attempt in range(3):
             try:
                 self.bus.write_byte_data(self.ADDRESS, self.REG_BATFET_DIS, self.BYTE_BATFET_DIS)
                 return 0
