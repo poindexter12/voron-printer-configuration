@@ -72,31 +72,50 @@ alert() {
 }
 
 log "Checking for Git changes..."
-if [ -n "$(git status --porcelain)" ]; then
-  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  log "Committing and pushing changes..."
-  if [ "$DRY_RUN" = "false" ]; then
-    git add .
-    git commit -m "Autocommit from $timestamp by configuration_backup.sh"
-
-    # set -e would abort here before anything could report why.
-    if git push origin "$BRANCH"; then
-      if [ -f "$FAIL_SENTINEL" ]; then
-        log "Push recovered; clearing $FAIL_SENTINEL"
-        rm -f "$FAIL_SENTINEL"
-      fi
-    else
-      # Without this the counts come from a stale remote-tracking ref and
-      # report "0 behind" during the exact divergence they are meant to explain.
-      git fetch --quiet origin "$BRANCH" 2>/dev/null || true
-      ahead=$(git rev-list --count "origin/$BRANCH..$BRANCH" 2>/dev/null || echo "?")
-      behind=$(git rev-list --count "$BRANCH..origin/$BRANCH" 2>/dev/null || echo "?")
-      alert "push to origin/$BRANCH FAILED - $ahead commit(s) ahead, $behind behind. Backups are NOT leaving the Pi until this is resolved."
-      exit 1
-    fi
-  else
+if [ "$DRY_RUN" = "true" ]; then
+  if [ -n "$(git status --porcelain)" ]; then
     log "Dry run: would commit and push to $BRANCH"
+  else
+    log "No changes to commit."
+  fi
+  exit 0
+fi
+
+if [ -n "$(git status --porcelain)" ]; then
+  git add .
+  # `git status` reports dirty submodule *content*, but `git add .` cannot stage
+  # it - only the submodule pointer, which has not moved. Committing anyway dies
+  # with "no changes added to commit", and set -e then kills every hourly run.
+  # The DB churn used to guarantee something stageable and hid this entirely.
+  if git diff --cached --quiet; then
+    log "Changes present but nothing stageable (dirty submodule content is not"
+    log "  captured by this repo - see config/klipper-macros). Skipping commit."
+  else
+    timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+    log "Committing changes..."
+    git commit -m "Autocommit from $timestamp by configuration_backup.sh"
   fi
 else
   log "No changes to commit."
+fi
+
+# Push whenever the Pi is ahead, whether or not this run committed. Keeping this
+# separate from the commit means an unpushed backlog still leaves the machine.
+git fetch --quiet origin "$BRANCH" 2>/dev/null || true
+ahead=$(git rev-list --count "origin/$BRANCH..$BRANCH" 2>/dev/null || echo 0)
+if [ "$ahead" -gt 0 ] 2>/dev/null; then
+  log "Pushing $ahead commit(s) to origin/$BRANCH..."
+  # set -e would abort here before anything could report why.
+  if git push origin "$BRANCH"; then
+    if [ -f "$FAIL_SENTINEL" ]; then
+      log "Push recovered; clearing $FAIL_SENTINEL"
+      rm -f "$FAIL_SENTINEL"
+    fi
+  else
+    behind=$(git rev-list --count "$BRANCH..origin/$BRANCH" 2>/dev/null || echo "?")
+    alert "push to origin/$BRANCH FAILED - $ahead commit(s) ahead, $behind behind. Backups are NOT leaving the Pi until this is resolved."
+    exit 1
+  fi
+else
+  log "Nothing to push."
 fi
