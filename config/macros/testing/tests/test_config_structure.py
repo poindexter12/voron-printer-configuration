@@ -24,6 +24,19 @@ EXTERNAL_INCLUDES = {'mainsail.cfg'}
 # Folders under macros/ that hold tooling rather than Klipper macros.
 NON_FEATURE_MACRO_DIRS = {'testing'}
 
+# Sections this repo redeclares on purpose to override a third-party default.
+# Klipper takes last-wins, so the overriding file has to be included AFTER the
+# file it overrides; an override that loads first is silently dead, which is
+# what test_intentional_overrides_win_on_load_order guards.
+# Keyed by normalized section name (see normalized_section).
+INTENTIONAL_OVERRIDES = {
+    'gcode_macro _lazy_home_inner': {
+        'overrides': 'klipper-macros/kinematics.cfg',
+        'winner': 'homing.cfg',
+        'why': 'sets reduced TMC currents around homing, then restores them (#17)',
+    },
+}
+
 # config/klipper-macros is a git submodule. A clone without --recursive leaves
 # it empty, which is a checkout problem rather than a config problem, so the
 # include checks step around it instead of reporting a false failure.
@@ -132,12 +145,94 @@ def test_external_includes_are_declared_not_missing():
         f"EXTERNAL_INCLUDES lists targets printer.cfg no longer includes: {sorted(stale)}"
 
 
+def load_order():
+    """Map each config file to its position in Klipper's load order."""
+    return {str(f.relative_to(CONFIG_ROOT)): i
+            for i, f in enumerate(local_config_files())}
+
+
+def is_declared_override(key, files):
+    """True when this collision is exactly the override we declared."""
+    declared = INTENTIONAL_OVERRIDES.get(key)
+    if declared is None:
+        return False
+    # `files` holds "<path> as [<header>]" strings; compare on the paths.
+    paths = {entry.split(' as [')[0] for entry in files}
+    return paths == {declared['overrides'], declared['winner']}
+
+
 @pytest.mark.config
 def test_no_section_declared_in_two_files():
-    """Klipper takes last-wins on a duplicated section, without warning."""
-    duplicates = duplicate_sections(local_config_files(), CONFIG_ROOT)
+    """Klipper takes last-wins on a duplicated section, without warning.
+
+    Declared overrides in INTENTIONAL_OVERRIDES are exempt, but only for the
+    exact file pair they name - a third file declaring the same section, or
+    the override moving, still fails.
+    """
+    duplicates = {k: v for k, v in duplicate_sections(local_config_files(), CONFIG_ROOT).items()
+                  if not is_declared_override(k, v)}
     assert not duplicates, "Sections declared in more than one file: " + ", ".join(
         f"[{key}] in {sorted(files)}" for key, files in sorted(duplicates.items()))
+
+
+@pytest.mark.config
+def test_intentional_overrides_win_on_load_order():
+    """An override included before the file it overrides is dead code.
+
+    Klipper takes the last declaration, so getting this backwards leaves the
+    upstream version active with no error - the exact silence these checks
+    exist to remove.
+    """
+    order = load_order()
+    wrong = []
+    for key, decl in INTENTIONAL_OVERRIDES.items():
+        winner, loser = decl['winner'], decl['overrides']
+        if winner not in order or loser not in order:
+            continue  # not resolvable in this checkout; other tests cover that
+        if order[winner] < order[loser]:
+            wrong.append(f"[{key}] {winner} loads before {loser}, so the override never applies")
+    assert not wrong, "; ".join(wrong)
+
+
+@pytest.mark.config
+def test_intentional_overrides_are_still_real():
+    """Keeps the allowlist from outliving the collision it excuses."""
+    duplicates = duplicate_sections(local_config_files(), CONFIG_ROOT)
+    order = load_order()
+    stale = []
+    for key, decl in INTENTIONAL_OVERRIDES.items():
+        if decl['overrides'] not in order:
+            continue  # submodule not checked out
+        if key not in duplicates:
+            stale.append(f"[{key}] is allowlisted but no longer declared in two files")
+    assert not stale, "; ".join(stale)
+
+
+@pytest.mark.config
+def test_every_feature_macro_is_actually_included():
+    """A macro folder nobody wired up loads nothing, silently.
+
+    Klipper globs are not recursive, so every macros/<feature>/ needs its own
+    [include] line in printer.cfg. Forget one and the macros are simply absent
+    at runtime - no error, no warning. test_every_include_resolves catches the
+    inverse (an include pointing at a folder that is gone); this catches the
+    folder that exists but was never wired up.
+
+    Asserting the .cfg files end up in the resolved load set, rather than
+    matching the include text, also catches a typo'd or too-narrow glob.
+    """
+    loaded = {f.resolve() for f in local_config_files()}
+    missing = []
+    for feature_dir in sorted(MACROS_ROOT.iterdir()):
+        if (not feature_dir.is_dir() or feature_dir.name.startswith('.')
+                or feature_dir.name in NON_FEATURE_MACRO_DIRS):
+            continue
+        for cfg in sorted(feature_dir.glob('*.cfg')):
+            if cfg.resolve() not in loaded:
+                missing.append(str(cfg.relative_to(CONFIG_ROOT)))
+    assert not missing, (
+        "Macro files that no [include] in printer.cfg loads: "
+        f"{missing}. Add [include macros/<feature>/*.cfg] for each.")
 
 
 @pytest.mark.config
