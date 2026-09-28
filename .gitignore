@@ -25,6 +25,7 @@ database/moonraker-sql.db
 !/models/
 !/observability/
 !/powerpi/
+!/tools/
 !/*.md
 
 # Machine-local Claude settings: absolute hook paths and personal permission
