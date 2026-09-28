@@ -147,3 +147,20 @@ def test_component_macro(results_dir):
 ```
 
 Use simple functions, not classes. Test data dictionary at top, clean function below.
+
+## Operating the live printer
+
+- Host is `voron-printer.home.arpa`, never `.local`. Moonraker listens on `:7125`.
+- `tools/moonraker.py` wraps the Moonraker calls (`status`, `gcode`, `upload`,
+  `start`, `cancel`, `log`, `restart`) and works when SSH to the Pi does not.
+  Deploy a config edit with `upload FILE --config`, then `restart`.
+- Never home, move, heat or start a print without an explicit "hands clear"
+  from the user. Nothing in the tooling checks the bed is clear.
+- klipper-macros wraps `SET_GCODE_OFFSET` and saves every Z offset into the
+  active bed surface in `variables.cfg`, even when the print is cancelled. Test
+  G-code that shifts Z must use `_KM_SET_GCODE_OFFSET_BASE`. After editing
+  `[probe] z_offset`, run `ADJUST_SURFACE_OFFSETS IGNORE=1`.
+- On the printer this repo is `printer_data`, and `backup/configuration_backup.sh`
+  commits and pushes config changes straight to `main` every few hours. A hand
+  commit of an edit already deployed to the printer may be dropped as a
+  duplicate when rebased onto `origin/main`.
