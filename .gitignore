@@ -22,6 +22,8 @@ database/moonraker-sql.db
 !/docs/
 !/ssh/
 !/slicer-profiles/
+# Orca writes cloud-sync metadata next to each saved user preset
+/slicer-profiles/**/*.info
 !/models/
 !/observability/
 !/powerpi/
