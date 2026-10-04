@@ -18,5 +18,6 @@
         "Voron 2.4 350 voron-printer",
         "Voron 2.4 350 0.4 nozzle"
     ],
-    "brim_type": "outer_only"
+    "brim_type": "outer_only",
+    "top_bottom_infill_wall_overlap": "20%"
 }
