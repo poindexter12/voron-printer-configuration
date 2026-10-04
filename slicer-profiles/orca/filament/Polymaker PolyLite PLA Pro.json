@@ -77,5 +77,8 @@
     ],
     "filament_wipe": [
         "1"
+    ],
+    "filament_flow_ratio": [
+        "0.95"
     ]
 }
