@@ -71,5 +71,11 @@
     "pressure_advance": [
         "0.045"
     ],
-    "compatible_printers": []
+    "compatible_printers": [],
+    "filament_retraction_length": [
+        "0.5"
+    ],
+    "filament_wipe": [
+        "1"
+    ]
 }
