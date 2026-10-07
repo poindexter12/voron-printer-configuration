@@ -19,6 +19,5 @@
         "Voron 2.4 350 0.4 nozzle"
     ],
     "brim_type": "outer_only",
-    "top_bottom_infill_wall_overlap": "20%",
-    "first_layer_flow_ratio": "1.08"
+    "top_bottom_infill_wall_overlap": "20%"
 }
