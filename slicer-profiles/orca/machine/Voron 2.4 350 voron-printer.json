@@ -7,7 +7,7 @@
 	"from": "User",
 	"host_type": "moonraker",
 	"inherits": "Voron 2.4 350 0.4 nozzle",
-	"layer_change_gcode": "AFTER_LAYER_CHANGE",
+	"layer_change_gcode": "AFTER_LAYER_CHANGE\n{if layer_num == 1}M221 S100 ; back to normal flow from layer 2{endif}",
 	"machine_max_acceleration_extruding": [
 		"10000",
 		"10000"
@@ -48,7 +48,7 @@
 		"15",
 		"15"
 	],
-	"machine_start_gcode": "M190 S0\nM109 S0\n; PRINT_START_SET MODEL_MIN/MODEL_MAX omitted: OrcaSlicer has no model bounding_box placeholder\n_PRINT_START_PHASE_INIT EXTRUDER={nozzle_temperature_initial_layer[initial_extruder]} BED=[bed_temperature_initial_layer_single] MESH_MIN={first_layer_print_min[0]},{first_layer_print_min[1]} MESH_MAX={first_layer_print_max[0]},{first_layer_print_max[1]} LAYERS=[total_layer_count] NOZZLE_SIZE={nozzle_diameter[0]}\n_PRINT_START_PHASE_PREHEAT\n_PRINT_START_PHASE_PROBING\n_PRINT_START_PHASE_EXTRUDER\n_PRINT_START_PHASE_PURGE",
+	"machine_start_gcode": "M190 S0\nM109 S0\n; PRINT_START_SET MODEL_MIN/MODEL_MAX omitted: OrcaSlicer has no model bounding_box placeholder\n_PRINT_START_PHASE_INIT EXTRUDER={nozzle_temperature_initial_layer[initial_extruder]} BED=[bed_temperature_initial_layer_single] MESH_MIN={first_layer_print_min[0]},{first_layer_print_min[1]} MESH_MAX={first_layer_print_max[0]},{first_layer_print_max[1]} LAYERS=[total_layer_count] NOZZLE_SIZE={nozzle_diameter[0]}\n_PRINT_START_PHASE_PREHEAT\n_PRINT_START_PHASE_PROBING\n_PRINT_START_PHASE_EXTRUDER\n_PRINT_START_PHASE_PURGE\nM221 S105 ; layer 1 only: ~1.00 effective over filament flow 0.95; reset on layer 2 and by PRINT_END",
 	"name": "Voron 2.4 350 voron-printer",
 	"nozzle_type": [
 		"brass"
